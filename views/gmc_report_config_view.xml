@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record model="ir.ui.view" id="gmc_report_config_form_view">
+            <field name="name">gmc_report_config_form_view</field>
+            <field name="model">gmc.report.config</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="execute" string="Save" type="object" class="btn btn-primary" />
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+
+                        <group>
+                            <field name="production_amount_account_id" />
+                        </group>
+
+                        <group string="Cost of Material Used">
+                            <group>
+                                <field name="begining_material_stock_account_id"/>
+                                <field name="material_net_purchased_account_id"/>
+                                <field name="ending_material_stock_account_id"/>
+                                <field name="material_adjustment_account_id"/>
+                            </group>
+                            <group>
+                                <field name="begining_work_in_process_account_id"/>
+                                <field name="ending_work_in_process_account_id"/>
+                                <field name="adjustment_account_id"/>
+                                <field name="process_cost_account_id"/>
+                            </group>
+                        </group>
+
+                        <group string="Labor Cost">
+                            <field name="labor_cost_account_ids" />
+                        </group>
+
+                        <group string="Manufacturing Expenses">
+                            <field name="manufacturing_expense_account_ids" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="gmc_report_config_action">
+            <field name="name">Gross Manufacturing Cost Report</field>
+            <field name="res_model">gmc.report.config</field>
+            <field name="view_id" ref="gmc_report_config_form_view" />
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="res_id" ref="gmc_report_config_default" />
+        </record>
+
+        <menuitem id="manufacture_cost_report_menu" name="Manufacture Cost Report" parent="account.menu_finance_configuration" sequence="99" />
+
+        <menuitem id="gmc_report_config_menu" name="Gross Manufacturing Cost" parent="manufacture_cost_report_menu" action="gmc_report_config_action" sequence="1"/>
+
+    </data>
+</odoo>

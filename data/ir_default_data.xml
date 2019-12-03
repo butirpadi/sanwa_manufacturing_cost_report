@@ -1,0 +1,8 @@
+<odoo>
+	<data noupdate="1" >
+		<record model="gmc.report.config"
+			id="gmc_report_config_default">
+			<field name="name">Gross Manufacturing Cost Report Config</field>
+		</record>
+	</data>
+</odoo>
