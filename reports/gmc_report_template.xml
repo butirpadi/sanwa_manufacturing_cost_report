@@ -3,6 +3,9 @@
         <template id="gmc_report_template">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.basic_layout">
+                    <div class="header ">
+
+                    </div>
                     <div class="page" style="font-size: 10pt;">
                         <style type="text/css">
                             table.table-bordered, table.table-bordered thead tr th, table.table-bordered tbody tr td {
@@ -15,17 +18,26 @@
                         </style>
 
 
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-12 text-center">
-                                <h5>Gross Manufacturing Cost (COIL)</h5>
-                                <span t-field="user.company_id.name" />
-                                <br/>
+                                <h6 style="font-weight:bolder;">Gross Manufacturing Cost (COIL)</h6>
                                 <br/>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="row">
                             <div class="col-12">
+                                <div class="text-center">
+                                    <h6 style="font-weight:bolder;">Gross Manufacturing Cost (COIL)</h6>
+                                </div>
+                                
+                                <span t-field="user.company_id.name" />
+                                <br/>
+                                <span t-field="doc.date_from" />
+                                <span>-</span>
+                                <span t-field="doc.date_to" />
+                                <br/>
+
                                 <table class="table table-sm table-bordered">
                                     <thead>
                                         <tr>
@@ -40,13 +52,24 @@
                                                 <strong t-field="doc.production_amount_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.production_amount" />
+                                                <strong t-esc="'{0:,.2f}'.format(doc.production_amount)" />
                                             </td>
                                             <td class="text-right">
-                                                100%
+                                                <strong>100%</strong>
                                             </td>
-                                            <td class="text-right"></td>
-                                            <td class="text-right"></td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.production_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong>100%</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -55,117 +78,153 @@
                                                 </strong>
                                             </td>
                                             <td class="text-right">
-
+                                                <strong t-esc="'{0:,.2f}'.format(doc.cost_of_material_used_amount)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <strong t-esc="'{0:,.2f}'.format(doc.cost_of_material_used_amount_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.cost_of_material_used_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.cost_of_material_used_amount_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.begining_material_stock_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.begining_material_stock" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_material_stock)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_material_stock_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_material_stock_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_material_stock_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.material_net_purchased_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.material_net_purchased" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_net_purchased)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_net_purchased_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_net_purchased_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_net_purchased_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.ending_material_stock_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.ending_material_stock" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_material_stock)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_material_stock_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_material_stock_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_material_stock_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.material_adjustment_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.material_adjustment" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_adjustment)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_adjustment_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_adjustment_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.material_adjustment_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.begining_work_in_process_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.begining_work_in_process" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_work_in_process)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_work_in_process_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_work_in_process_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.begining_work_in_process_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.ending_work_in_process_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.ending_work_in_process" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_work_in_process)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_work_in_process_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_work_in_process_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.ending_work_in_process_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.adjustment_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.adjustment" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.adjustment)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.adjustment_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.adjustment_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.adjustment_percent_a_year)" />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <span t-field="doc.process_cost_account_id.name" />
                                             </td>
                                             <td class="text-right">
-                                                <span t-field="doc.process_cost" />
+                                                <t t-esc="'{0:,.2f}'.format(doc.process_cost)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <t t-esc="'{0:,.2f}'.format(doc.process_cost_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.process_cost_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'{0:,.2f}'.format(doc.process_cost_percent_a_year)" />
+                                            </td>
                                         </tr>
 
                                         <tr>
@@ -181,13 +240,17 @@
                                                 <strong>Labor Cost</strong>
                                             </td>
                                             <td class="text-right">
-
+                                                <strong t-esc="'{0:,.2f}'.format(doc.labor_cost_amount)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <strong t-esc="'{0:,.2f}'.format(doc.labor_cost_amount_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.labor_cost_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.labor_cost_amount_percent_a_year)" />
+                                            </td>
                                         </tr>
 
                                         <t t-foreach="doc.labor_cost" t-as="lbc">
@@ -196,13 +259,17 @@
                                                     <span t-field="lbc.account_id.name" />
                                                 </td>
                                                 <td class="text-right">
-                                                    <span t-field="lbc.account_value" />
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_value)" />
                                                 </td>
                                                 <td class="text-right">
-
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_percent)" />
                                                 </td>
-                                                <td></td>
-                                                <td></td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_value_a_year)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_percent_a_year)" />
+                                                </td>
                                             </tr>
                                         </t>
 
@@ -213,19 +280,23 @@
                                             <td></td>
                                             <td></td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>
                                                 <strong>Manufacturing Expenses</strong>
                                             </td>
                                             <td class="text-right">
-
+                                                <strong t-esc="'{0:,.2f}'.format(doc.manufacture_expenses_amount)" />
                                             </td>
                                             <td class="text-right">
-
+                                                <strong t-esc="'{0:,.2f}'.format(doc.manufacture_expenses_amount_percent)" />
                                             </td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.manufacture_expenses_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.manufacture_expenses_amount_percent_a_year)" />
+                                            </td>
                                         </tr>
 
                                         <t t-foreach="doc.manufacture_expenses" t-as="mnc">
@@ -234,15 +305,49 @@
                                                     <span t-field="mnc.account_id.name" />
                                                 </td>
                                                 <td class="text-right">
-                                                    <span t-field="mnc.account_value" />
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_value)" />
                                                 </td>
                                                 <td class="text-right">
-
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_percent)" />
                                                 </td>
-                                                <td></td>
-                                                <td></td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_value_a_year)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_percent_a_year)" />
+                                                </td>
                                             </tr>
                                         </t>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <strong>Total (Labor + Manuf. Expenses)</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-set="total_expense" t-value="doc.labor_cost_amount + doc.manufacture_expenses_amount" />
+                                                <t t-set="total_expense_percent" t-value="total_expense / doc.production_amount * 100" />
+                                                <strong t-esc="'{0:,.2f}'.format(total_expense)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(total_expense_percent)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-set="total_expense_a_year" t-value="doc.labor_cost_amount_a_year + doc.manufacture_expenses_amount_a_year" />
+                                                <t t-set="total_expense_percent_a_year" t-value="total_expense_a_year / doc.production_amount_a_year * 100" />
+                                                <strong t-esc="'{0:,.2f}'.format(total_expense_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(total_expense_percent_a_year)" />
+                                            </td>
+                                        </tr>
 
                                     </tbody>
                                 </table>
