@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="gmc_report_form" model="ir.ui.view">
+            <field name="name">gmc_report_form</field>
+            <field name="model">gmc.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="date_from" string="Start Date" />
+                        </group>
+                        <group>
+                            <field name="date_to" string="End Date" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="action_submit" string="Submit" class="oe_highlight"/>
+                        
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            id="action_gmc_report"
+            res_model="gmc.report"
+            name="Gross Manufacturing Cost Report"
+            src_model="account.account"
+            view_mode="form"
+            multi="True"
+            target="new"
+            key2="client_action_multi"
+        />
+
+        <menuitem id="manufacturing_cost_report_menu" name="Manufacture Cost Report" parent="account.menu_finance_reports" sequence="99"/>
+
+        <menuitem id="gross_manufacture_cost_report_menu" name="Gross Manufacture Cost" parent="manufacturing_cost_report_menu" action="action_gmc_report" sequence="1"/>
+    </data>
+</odoo>

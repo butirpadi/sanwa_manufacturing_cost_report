@@ -1,0 +1,150 @@
+<odoo>
+    <data>
+        <record model="report.paperformat" id="sanwa_gross_manufacturing_cost_report_format">
+            <field name="name">Gross Manufacturing Cost Report Format</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_right">7</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">96</field>
+        </record>
+        
+        <!-- <record model="report.paperformat" id="ajm_purchase_order">
+            <field name="name">ajm_purchase_order</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_right">7</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">96</field>
+        </record>
+       
+        <record model="report.paperformat" id="ajm_paperformat_manufacture_order">
+            <field name="name">ajm_paperformat_manufacture_order</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">30</field>
+            <field name="margin_right">7</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">22</field>
+            <field name="dpi">96</field>
+        </record>
+        
+        <record model="report.paperformat" id="ajm_blance_po_format">
+            <field name="name">ajm_blance_po_format</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_width">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">15</field>
+            <field name="margin_right">7</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">96</field>
+        </record> -->
+
+        
+        <report 
+            id="gross_manufacturing_cost_report_action" 
+            model="gmc.report" 
+            string="Gross Manufacturing Cost" 
+            report_type="qweb-pdf" 
+            attachment_use="False"
+            print_report_name="'Gross_Manufacturing_cost_%s' % object.create_date" 
+            name="sanwa_manufacturing_cost_report.gmc_report_template" 
+            file="sanwa_manufacturing_cost_report.gmc_report_template"
+            paperformat="sanwa_gross_manufacturing_cost_report_format"
+            menu="False" />
+        
+        <!-- <report 
+            id="action_report_ajm_voucher" 
+            model="account.bank.statement" 
+            string="Voucher" 
+            report_type="qweb-pdf" 
+            attachment_use="False"
+            print_report_name="'Voucher_%s' % object.name" 
+            name="account_journal_mod.ajm_voucher_report" 
+            file="account_journal_mod.ajm_voucher_report"
+            paperformat="ajm_paperformat_manufacture_order" /> -->
+
+        <!-- <report 
+            id="action_report_ajm_journal_voucher" 
+            model="account.move" 
+            string="Voucher" 
+            report_type="qweb-pdf" 
+            attachment_use="False"
+            print_report_name="'Voucher_%s' % object.name" 
+            name="account_journal_mod.ajm_journal_voucher_report" 
+            file="account_journal_mod.ajm_journal_voucher_report"
+            paperformat="sanwa_report_voucher_format" />
+
+        <report
+            id="action_report_balance_purchase"
+            model="balance.purchase.report"
+            string="Balance PO"
+            report_type="qweb-html"
+            print_report_name="'Balance_PO_%s' % object.date_start" 
+            name="account_journal_mod.balance_purchase_report_template"
+            file="account_journal_mod.balance_purchase_report_template"
+            paperformat="ajm_blance_po_format" />
+        />
+
+        <report 
+            id="action_sanwa_purchase_order" 
+            model="purchase.order" 
+            string="Purchase Order" 
+            report_type="qweb-pdf" 
+            attachment_use="False"
+            print_report_name="'Purchase_Order_%s' % object.name" 
+            name="account_journal_mod.ajm_sanwa_purchase_report" 
+            file="account_journal_mod.ajm_sanwa_purchase_report"
+            paperformat="ajm_purchase_order" />
+
+        
+        <report 
+            string="Request for Quotation" 
+            id="purchase.report_purchase_quotation" 
+            model="purchase.order" 
+            report_type="qweb-pdf"
+            name="purchase.report_purchasequotation" 
+            file="purchase.report_purchasequotation"
+            print_report_name="'Request for Quotation - %s' % (object.name)"
+            menu="False"
+        />
+
+        <report 
+            string="Purchase Order" 
+            id="purchase.action_report_purchase_order" 
+            model="purchase.order" 
+            report_type="qweb-pdf"
+            name="purchase.report_purchaseorder" 
+            file="purchase.report_purchaseorder"
+            print_report_name="
+                (object.state in ('draft', 'sent') and 'Request for Quotation - %s' % (object.name) or
+                'Purchase Order - %s' % (object.name))"
+            menu="False"
+        /> -->
+
+    </data>
+</odoo>

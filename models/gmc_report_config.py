@@ -79,17 +79,18 @@ class GmcReportConfig(models.Model):
     )
 
     def execute(self):
-        self.write({
-            'production_amount_account_id': self.production_amount_account_id,
-            'begining_material_stock_account_id': self.begining_material_stock_account_id,
-            'material_net_purchased_account_id': self.material_net_purchased_account_id,
-            'ending_material_stock_account_id': self.ending_material_stock_account_id,
-            'material_adjustment_account_id': self.material_adjustment_account_id,
-            'begining_work_in_process_account_id': self.begining_work_in_process_account_id,
-            'ending_work_in_process_account_id': self.ending_work_in_process_account_id,
-            'adjustment_account_id': self.adjustment_account_id,
-            'process_cost_account_id': self.process_cost_account_id,
-            'labor_cost_account_ids': self.labor_cost_account_ids,
-            'manufacturing_expense_account_ids': self.manufacturing_expense_account_ids,
-        })
+        # self.write({
+        #     'production_amount_account_id': self.production_amount_account_id,
+        #     'begining_material_stock_account_id': self.begining_material_stock_account_id,
+        #     'material_net_purchased_account_id': self.material_net_purchased_account_id,
+        #     'ending_material_stock_account_id': self.ending_material_stock_account_id,
+        #     'material_adjustment_account_id': self.material_adjustment_account_id,
+        #     'begining_work_in_process_account_id': self.begining_work_in_process_account_id,
+        #     'ending_work_in_process_account_id': self.ending_work_in_process_account_id,
+        #     'adjustment_account_id': self.adjustment_account_id,
+        #     'process_cost_account_id': self.process_cost_account_id,
+        #     # 'labor_cost_account_ids': self.labor_cost_account_ids,
+        #     # 'manufacturing_expense_account_ids': self.manufacturing_expense_account_ids,
+        # })
+        print('Execute Function')
 

@@ -1,0 +1,260 @@
+<odoo>
+    <data>
+        <template id="gmc_report_template">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="font-size: 10pt;">
+                        <style type="text/css">
+                            table.table-bordered, table.table-bordered thead tr th, table.table-bordered tbody tr td {
+                                border: black thin solid !important;
+                            }
+                            table.table thead tr th{
+                                text-align:center;
+                                vertical-align:middle;
+                            }
+                        </style>
+
+
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h5>Gross Manufacturing Cost (COIL)</h5>
+                                <span t-field="user.company_id.name" />
+                                <br/>
+                                <br/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th >ITEM</th>
+                                            <th colspan="2">THIS MONTH</th>
+                                            <th colspan="2">YEAR TO DATE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td >
+                                                <strong t-field="doc.production_amount_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.production_amount" />
+                                            </td>
+                                            <td class="text-right">
+                                                100%
+                                            </td>
+                                            <td class="text-right"></td>
+                                            <td class="text-right"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>
+                                                    Cost of Material Used
+                                                </strong>
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.begining_material_stock_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.begining_material_stock" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.material_net_purchased_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.material_net_purchased" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.ending_material_stock_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.ending_material_stock" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.material_adjustment_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.material_adjustment" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.begining_work_in_process_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.begining_work_in_process" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.ending_work_in_process_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.ending_work_in_process" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.adjustment_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.adjustment" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="doc.process_cost_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="doc.process_cost" />
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <strong>Labor Cost</strong>
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <t t-foreach="doc.labor_cost" t-as="lbc">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="lbc.account_id.name" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="lbc.account_value" />
+                                                </td>
+                                                <td class="text-right">
+
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </t>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <strong>Manufacturing Expenses</strong>
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td class="text-right">
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <t t-foreach="doc.manufacture_expenses" t-as="mnc">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="mnc.account_id.name" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="mnc.account_value" />
+                                                </td>
+                                                <td class="text-right">
+
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </t>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="footer">
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
