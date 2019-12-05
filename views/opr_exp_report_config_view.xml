@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record model="ir.ui.view" id="opr_exp_report_config_form_view">
+            <field name="name">opr_exp_report_config_form_view</field>
+            <field name="model">operating.expense.report.config</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="execute" string="Save" type="object" class="btn btn-primary" />
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+
+                        <group>
+                            <field name="net_sales_account_id" options="{ 'no_open': True, 'no_create_edit': True}" />
+                        </group>
+
+                        <notebook>
+                            <page name="payroll_page" string="Payroll">
+                                <field name="payroll_ids" options="{'no_create': True}" widget="many2many">
+                                    <tree >
+                                        <field name="code"  />
+                                        <field name="name"  />
+                                        <field name="user_type_id"  />
+                                    </tree>
+                                </field>
+
+                            </page>
+                            <page name="selling_expenses" string="Selling Expenses">
+                                <field name="selling_exp_ids" options="{'no_create': True}" widget="many2many">
+                                    <tree >
+                                        <field name="code"  />
+                                        <field name="name"  />
+                                        <field name="user_type_id"  />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="administrative_expenses" string="Administrative Expenses">
+                                <field name="administrative_exp_ids" options="{'no_create': True}" widget="many2many">
+                                    <tree >
+                                        <field name="code"  />
+                                        <field name="name"  />
+                                        <field name="user_type_id"  />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="opr_exp_report_config_action">
+            <field name="name">Operating Expenses Report</field>
+            <field name="res_model">operating.expense.report.config</field>
+            <field name="view_id" ref="opr_exp_report_config_form_view" />
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="res_id" ref="opr_exp_report_config_default" />
+        </record>
+
+        <menuitem id="opr_exp_report_config_menu" name="Operating Expenses" parent="manufacture_cost_report_config_menu" action="opr_exp_report_config_action" sequence="2"/>
+
+    </data>
+</odoo>

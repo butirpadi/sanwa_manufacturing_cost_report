@@ -23,12 +23,19 @@
 
     # always loaded
     'data': [
+        # security
         'security/ir.model.access.csv',
+        # data
         'data/ir_default_data.xml',
+        # views
         'views/gmc_report_config_view.xml',
         'views/gmc_report_view.xml',
         'reports/gmc_report_template.xml',
+        'views/opr_exp_report_config_view.xml',
+        'views/opr_exp_report_view.xml',
+        # Reports
         'reports/action_report.xml',
+        'reports/opr_exp_report_template.xml',
         # 'views/views.xml',
         # 'views/templates.xml',
     ],

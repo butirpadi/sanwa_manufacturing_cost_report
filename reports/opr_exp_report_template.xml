@@ -1,0 +1,249 @@
+<odoo>
+    <data>
+        <template id="opr_exp_report_template">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="header ">
+
+                    </div>
+                    <div class="page" style="font-size: 10pt;">
+                        <style type="text/css">
+                            table.table-bordered, table.table-bordered thead tr th, table.table-bordered tbody tr td {
+                                border: black thin solid !important;
+                            }
+                            table.table thead tr th{
+                                text-align:center;
+                                vertical-align:middle;
+                            }
+                        </style>
+
+
+                        <!-- <div class="row">
+                            <div class="col-12 text-center">
+                                <h6 style="font-weight:bolder;">Gross Manufacturing Cost (COIL)</h6>
+                                <br/>
+                            </div>
+                        </div> -->
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="text-center">
+                                    <h6 style="font-weight:bolder;">Operating Expenses (COIL)</h6>
+                                </div>
+
+                                <span t-field="user.company_id.name" />
+                                <br/>
+                                <span t-field="doc.date_from" />
+                                <span>-</span>
+                                <span t-field="doc.date_to" />
+                                <br/>
+
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th >ITEM</th>
+                                            <th colspan="2">THIS MONTH</th>
+                                            <th colspan="2">YEAR TO DATE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td >
+                                                <strong t-field="doc.net_sales_account_id.name" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.net_sales_amount)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong>100%</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.net_sales_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong>100%</strong>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <strong>Total of Payroll</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.payroll_amount)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.payroll_amount_percent)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.payroll_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.payroll_amount_percent_a_year)" />
+                                            </td>
+                                        </tr>
+
+                                        <t t-foreach="doc.payroll_ids" t-as="lbc">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="lbc.account_id.name" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_value)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_percent)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_value_a_year)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(lbc.account_percent_a_year)" />
+                                                </td>
+                                            </tr>
+                                        </t>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <strong>Total of Selling Expenses</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.selling_amount)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.selling_amount_percent)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.selling_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.selling_amount_percent_a_year)" />
+                                            </td>
+                                        </tr>
+
+                                        <t t-foreach="doc.selling_exp_ids" t-as="mnc">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="mnc.account_id.name" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_value)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_percent)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_value_a_year)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_percent_a_year)" />
+                                                </td>
+                                            </tr>
+                                        </t>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <strong>Administrative Expenses</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.administrative_amount)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.administrative_amount_percent)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.administrative_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="'{0:,.2f}'.format(doc.administrative_amount_percent_a_year)" />
+                                            </td>
+                                        </tr>
+
+                                        <t t-foreach="doc.administrative_exp_ids" t-as="mnc">
+                                            <tr>
+                                                <td>
+                                                    <span t-field="mnc.account_id.name" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_value)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_percent)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_value_a_year)" />
+                                                </td>
+                                                <td class="text-right">
+                                                    <t t-esc="'{0:,.2f}'.format(mnc.account_percent_a_year)" />
+                                                </td>
+                                            </tr>
+                                        </t>
+
+                                        <tr>
+                                            <td><![CDATA[&nbsp;]]></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <strong>TOTAL</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-set="total_amount" t-value="doc.payroll_amount + doc.selling_amount + doc.administrative_amount" />
+                                                <strong t-esc="'{0:,.2f}'.format(total_amount)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-if="doc.net_sales_amount > 0" t-esc="'{0:,.2f}'.format(total_amount / doc.net_sales_amount * 100)" />
+                                                <strong t-else="doc.net_sales_amount > 0" t-esc="'{0:,.2f}'.format(0)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-set="total_amount_a_year" t-value="doc.payroll_amount_a_year + doc.selling_amount_a_year + doc.administrative_amount_a_year" />
+                                                <strong t-esc="'{0:,.2f}'.format(total_amount_a_year)" />
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-if="doc.net_sales_amount_a_year > 0" t-esc="'{0:,.2f}'.format(total_amount_a_year / doc.net_sales_amount_a_year * 100)" />
+                                                <strong t-else="doc.net_sales_amount_a_year > 0" t-esc="'{0:,.2f}'.format(0)" />
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="footer">
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

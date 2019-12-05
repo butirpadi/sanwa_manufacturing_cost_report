@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="opr_exp_report_form" model="ir.ui.view">
+            <field name="name">opr_exp_report_form</field>
+            <field name="model">operating.expense.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="date_from" string="Start Date" />
+                        </group>
+                        <group>
+                            <field name="date_to" string="End Date" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="action_submit" string="Submit" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            id="action_opr_exp_report"
+            res_model="operating.expense.report"
+            name="Operating Expenses Report"
+            src_model="account.account"
+            view_mode="form"
+            multi="True"
+            target="new"
+            key2="client_action_multi"
+        />
+
+        <menuitem id="operating_expenses_report_menu" name="Operating Expenses" parent="manufacturing_cost_report_menu" action="action_opr_exp_report" sequence="1"/>
+    </data>
+</odoo>

@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_gmc_report_config,sanwa_manufacturing_cost_report.gmc_report_config_access,model_gmc_report_config,base.group_user,1,1,1,1
+access_opr_exp_report_config,sanwa_manufacturing_cost_report.opr_exp_report_config_access,model_operating_expense_report_config,base.group_user,1,1,1,1
 
