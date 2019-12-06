@@ -333,7 +333,9 @@
                                             </td>
                                             <td class="text-right">
                                                 <t t-set="total_expense" t-value="doc.labor_cost_amount + doc.manufacture_expenses_amount" />
-                                                <t t-set="total_expense_percent" t-value="total_expense / doc.production_amount * 100" />
+                                                <t t-if="doc.production_amount > 0" t-set="total_expense_percent" t-value="total_expense / doc.production_amount * 100" />
+                                                <t t-else="doc.production_amount > 0" t-set="total_expense_percent" t-value="0" />
+
                                                 <strong t-esc="'{0:,.2f}'.format(total_expense)" />
                                             </td>
                                             <td class="text-right">
@@ -341,7 +343,10 @@
                                             </td>
                                             <td class="text-right">
                                                 <t t-set="total_expense_a_year" t-value="doc.labor_cost_amount_a_year + doc.manufacture_expenses_amount_a_year" />
-                                                <t t-set="total_expense_percent_a_year" t-value="total_expense_a_year / doc.production_amount_a_year * 100" />
+                                                
+                                                <t t-if="doc.production_amount_a_year > 0" t-set="total_expense_percent_a_year" t-value="total_expense_a_year / doc.production_amount_a_year * 100" />
+                                                <t t-else="doc.production_amount_a_year > 0" t-set="total_expense_percent_a_year" t-value="0" />
+                                                
                                                 <strong t-esc="'{0:,.2f}'.format(total_expense_a_year)" />
                                             </td>
                                             <td class="text-right">
