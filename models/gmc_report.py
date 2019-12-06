@@ -210,8 +210,12 @@ class GmcReport(models.TransientModel):
 
         self.begining_material_stock = sum(bgn_mat_stk.mapped(
             'debit')) - sum(bgn_mat_stk.mapped('credit'))
-        self.begining_material_stock_percent = self.begining_material_stock / \
-            self.production_amount * 100
+        
+        if self.production_amount > 0:
+            self.begining_material_stock_percent = self.begining_material_stock / \
+                self.production_amount * 100
+        else:
+            self.begining_material_stock_percent = 0.0
         
         bgn_mat_stk_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -222,8 +226,11 @@ class GmcReport(models.TransientModel):
 
         self.begining_material_stock_a_year = sum(bgn_mat_stk_a_year.mapped(
             'debit')) - sum(bgn_mat_stk_a_year.mapped('credit'))
-        self.begining_material_stock_percent_a_year = self.begining_material_stock_a_year / \
-            self.production_amount_a_year * 100
+        if self.production_amount_a_year > 0:
+            self.begining_material_stock_percent_a_year = self.begining_material_stock_a_year / \
+                self.production_amount_a_year * 100
+        else:
+            self.begining_material_stock_percent_a_year = 0.0
 
         # get amount of material_net_purchased
         mat_net_purch = self.env['account.move.line'].search(
@@ -235,8 +242,11 @@ class GmcReport(models.TransientModel):
 
         self.material_net_purchased = sum(mat_net_purch.mapped(
             'debit')) - sum(mat_net_purch.mapped('credit'))
-        self.material_net_purchased_percent = self.material_net_purchased / \
-            self.production_amount * 100
+        if self.production_amount > 0:
+            self.material_net_purchased_percent = self.material_net_purchased / \
+                self.production_amount * 100
+        else:
+            self.material_net_purchased_percent = 0.0
         
         mat_net_purch_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -247,8 +257,11 @@ class GmcReport(models.TransientModel):
 
         self.material_net_purchased_a_year = sum(mat_net_purch_a_year.mapped(
             'debit')) - sum(mat_net_purch_a_year.mapped('credit'))
-        self.material_net_purchased_percent_a_year = self.material_net_purchased_a_year / \
-            self.production_amount_a_year * 100
+        if self.production_amount_a_year > 0:
+            self.material_net_purchased_percent_a_year = self.material_net_purchased_a_year / \
+                self.production_amount_a_year * 100
+        else:
+            self.material_net_purchased_percent_a_year = 0
 
         # get amount of material_net_purchased
         end_mat_stk = self.env['account.move.line'].search(
@@ -260,8 +273,11 @@ class GmcReport(models.TransientModel):
 
         self.ending_material_stock = sum(end_mat_stk.mapped(
             'debit')) - sum(end_mat_stk.mapped('credit'))
-        self.ending_material_stock_percent = self.ending_material_stock / \
+        if self.production_amount > 0:
+            self.ending_material_stock_percent = self.ending_material_stock / \
             self.production_amount * 100
+        else:
+            self.ending_material_stock_percent = 0.0
         
         end_mat_stk_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -272,8 +288,11 @@ class GmcReport(models.TransientModel):
 
         self.ending_material_stock_a_year = sum(end_mat_stk_a_year.mapped(
             'debit')) - sum(end_mat_stk_a_year.mapped('credit'))
-        self.ending_material_stock_percent_a_year = self.ending_material_stock_a_year / \
+        if self.production_amount_a_year > 0:
+            self.ending_material_stock_percent_a_year = self.ending_material_stock_a_year / \
             self.production_amount_a_year * 100
+        else:
+            self.ending_material_stock_percent_a_year = 0
 
         # get amount of material_adjustment
         mat_adj = self.env['account.move.line'].search(
@@ -285,8 +304,11 @@ class GmcReport(models.TransientModel):
 
         self.material_adjustment = sum(mat_adj.mapped(
             'debit')) - sum(mat_adj.mapped('credit'))
-        self.material_adjustment_percent = self.material_adjustment / \
-            self.production_amount * 100
+        if self.production_amount > 0:
+            self.material_adjustment_percent = self.material_adjustment / \
+                self.production_amount * 100
+        else:
+            self.material_adjustment_percent = 0.0
         
         mat_adj_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -297,8 +319,11 @@ class GmcReport(models.TransientModel):
 
         self.material_adjustment_a_year = sum(mat_adj_a_year.mapped(
             'debit')) - sum(mat_adj_a_year.mapped('credit'))
-        self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
+        if self.production_amount_a_year > 0:
+            self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
             self.production_amount_a_year * 100
+        else:
+            self.material_adjustment_percent_a_year = 0
 
         # get amount of begining wip
         bgn_wip = self.env['account.move.line'].search(
@@ -310,8 +335,11 @@ class GmcReport(models.TransientModel):
 
         self.begining_work_in_process = sum(bgn_wip.mapped(
             'debit')) - sum(bgn_wip.mapped('credit'))
-        self.begining_work_in_process_percent = self.begining_work_in_process / \
+        if self.production_amount > 0:
+            self.begining_work_in_process_percent = self.begining_work_in_process / \
             self.production_amount * 100
+        else:
+            self.begining_work_in_process_percent = 0.0
         
         bgn_wip_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -322,8 +350,11 @@ class GmcReport(models.TransientModel):
 
         self.begining_work_in_process_a_year = sum(bgn_wip_a_year.mapped(
             'debit')) - sum(bgn_wip_a_year.mapped('credit'))
-        self.begining_work_in_process_percent_a_year = self.begining_work_in_process_a_year / \
+        if self.production_amount_a_year > 0:
+            self.begining_work_in_process_percent_a_year = self.begining_work_in_process_a_year / \
             self.production_amount_a_year * 100
+        else:
+            self.begining_work_in_process_percent_a_year = 0
 
         # get amount of ending wip
         end_wip = self.env['account.move.line'].search(
@@ -335,8 +366,11 @@ class GmcReport(models.TransientModel):
 
         self.ending_work_in_process = sum(end_wip.mapped(
             'debit')) - sum(end_wip.mapped('credit'))
-        self.ending_work_in_process_percent = self.ending_work_in_process / \
+        if self.production_amount > 0:
+            self.ending_work_in_process_percent = self.ending_work_in_process / \
             self.production_amount * 100
+        else:
+            self.ending_work_in_process_percent = 0.0
         
         end_wip_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -347,8 +381,12 @@ class GmcReport(models.TransientModel):
 
         self.ending_work_in_process_a_year = sum(end_wip_a_year.mapped(
             'debit')) - sum(end_wip_a_year.mapped('credit'))
-        self.ending_work_in_process_percent_a_year = self.ending_work_in_process_a_year / \
+
+        if self.production_amount_a_year > 0:
+            self.ending_work_in_process_percent_a_year = self.ending_work_in_process_a_year / \
             self.production_amount_a_year * 100
+        else:
+            self.ending_work_in_process_percent_a_year = 0
 
         # get amount of adjustment
         adjs = self.env['account.move.line'].search(
@@ -360,7 +398,10 @@ class GmcReport(models.TransientModel):
 
         self.adjustment = sum(adjs.mapped(
             'debit')) - sum(adjs.mapped('credit'))
-        self.adjustment_percent = self.adjustment / self.production_amount * 100
+        if self.production_amount > 0:
+            self.adjustment_percent = self.adjustment / self.production_amount * 100
+        else:
+            self.adjustment_percent = 0.0
         
         adjs_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -371,7 +412,11 @@ class GmcReport(models.TransientModel):
 
         self.adjustment_a_year = sum(adjs_a_year.mapped(
             'debit')) - sum(adjs_a_year.mapped('credit'))
-        self.adjustment_percent_a_year = self.adjustment_a_year / self.production_amount_a_year * 100
+        if self.production_amount_a_year > 0:
+            self.adjustment_percent_a_year = self.adjustment_a_year / self.production_amount_a_year * 100
+        else:
+            self.adjustment_percent_a_year = 0
+
 
         # get amount of process cost
         proc_cost = self.env['account.move.line'].search(
@@ -383,7 +428,10 @@ class GmcReport(models.TransientModel):
 
         self.process_cost = sum(proc_cost.mapped(
             'debit')) - sum(proc_cost.mapped('credit'))
-        self.process_cost_percent = self.process_cost / self.production_amount * 100
+        if self.production_amount > 0:
+            self.process_cost_percent = self.process_cost / self.production_amount * 100
+        else:
+            self.process_cost_percent = 0
         
         proc_cost_a_year = self.env['account.move.line'].search(
             ['&', '&',
@@ -394,19 +442,28 @@ class GmcReport(models.TransientModel):
 
         self.process_cost_a_year = sum(proc_cost_a_year.mapped(
             'debit')) - sum(proc_cost_a_year.mapped('credit'))
-        self.process_cost_percent_a_year = self.process_cost_a_year / self.production_amount_a_year * 100
+        if self.production_amount_a_year > 0:
+            self.process_cost_percent_a_year = self.process_cost_a_year / self.production_amount_a_year * 100
+        else:
+            self.process_cost_percent_a_year = 0
 
         # --------------------------------------------------------------
 
         self.cost_of_material_used_amount = self.begining_material_stock + \
             self.material_net_purchased - self.ending_material_stock - self.material_adjustment
-        self.cost_of_material_used_amount_percent = self.cost_of_material_used_amount / \
+        if self.production_amount > 0:
+            self.cost_of_material_used_amount_percent = self.cost_of_material_used_amount / \
             self.production_amount * 100
+        else:
+            self.cost_of_material_used_amount_percent = 0
         
         self.cost_of_material_used_amount_a_year = self.begining_material_stock_a_year + \
             self.material_net_purchased_a_year - self.ending_material_stock_a_year - self.material_adjustment_a_year
-        self.cost_of_material_used_amount_percent_a_year = self.cost_of_material_used_amount_a_year / \
+        if self.production_amount_a_year > 0:
+            self.cost_of_material_used_amount_percent_a_year = self.cost_of_material_used_amount_a_year / \
             self.production_amount_a_year * 100
+        else:
+            self.cost_of_material_used_amount_percent_a_year = 0
 
         print('get labor cost')
         labor_cost_ids = []
@@ -423,7 +480,11 @@ class GmcReport(models.TransientModel):
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
 
-            acc_percent = acc_amount / self.production_amount * 100
+            if self.production_amount > 0:
+                acc_percent = acc_amount / self.production_amount * 100
+            else:
+                acc_percent = 0
+
 
             # get account move line from this account
             acc_amls_a_year = self.env['account.move.line'].search(
@@ -436,7 +497,10 @@ class GmcReport(models.TransientModel):
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
 
-            acc_percent_a_year = acc_amount_a_year / self.production_amount_a_year * 100
+            if self.production_amount_a_year > 0:
+                acc_percent_a_year = acc_amount_a_year / self.production_amount_a_year * 100
+            else:
+                acc_percent_a_year = 0
 
             labor_cost_ids.append((0, 0, {
                 'account_id': acc.id,
@@ -450,10 +514,17 @@ class GmcReport(models.TransientModel):
         self.labor_cost = labor_cost_ids
 
         self.labor_cost_amount = sum(self.labor_cost.mapped('account_value'))
-        self.labor_cost_amount_percent = self.labor_cost_amount / self.production_amount * 100
+
+        if self.production_amount > 0:
+            self.labor_cost_amount_percent = self.labor_cost_amount / self.production_amount * 100
+        else:
+            self.labor_cost_amount_percent = 0
         
         self.labor_cost_amount_a_year = sum(self.labor_cost.mapped('account_value_a_year'))
-        self.labor_cost_amount_percent_a_year = self.labor_cost_amount_percent_a_year / self.production_amount_a_year * 100
+        if self.production_amount_a_year > 0:
+            self.labor_cost_amount_percent_a_year = self.labor_cost_amount_percent_a_year / self.production_amount_a_year * 100
+        else:
+            self.labor_cost_amount_percent_a_year = 0
 
         man_exp_ids = []
         for acc in gmc_report_config.manufacturing_expense_account_ids:
@@ -468,8 +539,10 @@ class GmcReport(models.TransientModel):
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
 
-            acc_percent = acc_amount / self.production_amount * 100
-            
+            if self.production_amount > 0:
+                acc_percent = acc_amount / self.production_amount * 100
+            else:
+                acc_percent = 0            
             
             acc_amls_a_year = self.env['account.move.line'].search(
                 ['&', '&',
@@ -481,7 +554,10 @@ class GmcReport(models.TransientModel):
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
 
-            acc_percent_a_year = acc_amount_a_year / self.production_amount_a_year * 100
+            if self.production_amount_a_year > 0:
+                acc_percent_a_year = acc_amount_a_year / self.production_amount_a_year * 100
+            else:
+                acc_percent_a_year = 0
 
 
             man_exp_ids.append((0, 0, {
@@ -497,13 +573,19 @@ class GmcReport(models.TransientModel):
 
         self.manufacture_expenses_amount = sum(
             self.manufacture_expenses.mapped('account_value'))
-        self.manufacture_expenses_amount_percent = self.manufacture_expenses_amount / \
-            self.production_amount * 100
+        if self.production_amount > 0:
+            self.manufacture_expenses_amount_percent = self.manufacture_expenses_amount / \
+                self.production_amount * 100
+        else:
+            self.manufacture_expenses_amount_percent = 0
         
         self.manufacture_expenses_amount_a_year = sum(
             self.manufacture_expenses.mapped('account_value_a_year'))
-        self.manufacture_expenses_amount_percent_a_year = self.manufacture_expenses_amount_a_year / \
+        if self.production_amount_a_year > 0:
+            self.manufacture_expenses_amount_percent_a_year = self.manufacture_expenses_amount_a_year / \
             self.production_amount_a_year * 100
+        else:
+            self.manufacture_expenses_amount_percent_a_year = 0
         
         # get fiscal year last month and day
         print('Get Fiscal Year Last Month & day')
