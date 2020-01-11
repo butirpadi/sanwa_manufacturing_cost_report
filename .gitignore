@@ -1,5 +1,6 @@
 *.pyc
 *.cpython-35.pyc
+*.cpython-37.pyc
 .project
 .pydevproject
 .settings
