@@ -92,7 +92,8 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <span t-field="doc.begining_material_stock_account_id.name" />
+                                                <!-- <span t-field="doc.begining_material_stock_account_id.name" /> -->
+                                                <span>Begining</span>
                                             </td>
                                             <td class="text-right">
                                                 <t t-esc="'{0:,.2f}'.format(doc.begining_material_stock)" />
@@ -109,7 +110,8 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <span t-field="doc.material_net_purchased_account_id.name" />
+                                                <!-- <span t-field="doc.material_net_purchased_account_id.name" /> -->
+                                                <span>Material Net Puchased</span>
                                             </td>
                                             <td class="text-right">
                                                 <t t-esc="'{0:,.2f}'.format(doc.material_net_purchased)" />
@@ -126,7 +128,8 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <span t-field="doc.ending_material_stock_account_id.name" />
+                                                <!-- <span t-field="doc.ending_material_stock_account_id.name" /> -->
+                                                <span>Ending</span>
                                             </td>
                                             <td class="text-right">
                                                 <t t-esc="'{0:,.2f}'.format(doc.ending_material_stock)" />
@@ -143,7 +146,8 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <span t-field="doc.material_adjustment_account_id.name" />
+                                                <!-- <span t-field="doc.material_adjustment_account_id.name" /> -->
+                                                <span>Adjustment</span>
                                             </td>
                                             <td class="text-right">
                                                 <t t-esc="'{0:,.2f}'.format(doc.material_adjustment)" />

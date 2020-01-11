@@ -16,11 +16,39 @@
                         </h1>
 
                         <group>
-                            <field name="production_amount_account_id" options="{ 'no_open': True, 'no_create_edit': True}" />
+                            <group>
+                                <field name="property_valuation" options="{ 'no_open': True, 'no_create_edit': True}" />
+                            </group>
+                            <group>
+                                <field name="production_amount_account_id" options="{ 'no_open': True, 'no_create_edit': True}" />
+                            </group>
                         </group>
 
                         <notebook>
-                            <page name="cost_of_material_page" string="Cost of Material Used">
+                            <page string="Account &amp; Journal">
+                                <group string="Stock Account">
+                                    <group>
+                                        <field name="persediaan_barang_dalam_proses_account_id" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="persediaan_barang_jadi_account_id" options="{'no_open': True, 'no_create': True}" />
+                                    </group>
+                                    <group>
+                                        <field name="pembelian_material_account_id" attrs="{'invisible': [('property_valuation','!=','manual')]}" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="stock_input_account_id" attrs="{'invisible': [('property_valuation','!=','real_time')]}" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="persediaan_material_account_id" options="{'no_open': True, 'no_create': True}" />
+                                    </group>
+                                </group>
+
+                                <group string="Account Journal">
+                                    <group>
+                                        <field name="purchase_journal_id" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="stock_journal_id" options="{'no_open': True, 'no_create': True}" />
+                                    </group>
+                                    <group>
+                                        <field name="adjustment_journal_id" options="{'no_open': True, 'no_create': True}" />
+                                    </group>
+                                </group>
+                            </page>
+                            <!-- <page name="cost_of_material_page" string="Cost of Material Used">
                                 <group>
                                     <group>
                                         <field name="begining_material_stock_account_id" options="{ 'no_open': True, 'no_create_edit': True}" />
@@ -35,13 +63,13 @@
                                         <field name="process_cost_account_id" options="{ 'no_open': True, 'no_create_edit': True}" />
                                     </group>
                                 </group>
-                            </page>
+                            </page> -->
                             <page name="labor_cost_page" string="Labor Cost">
                                 <field name="labor_cost_account_ids" options="{'no_create': True}" widget="many2many">
                                     <tree >
-                                        <field name="code"  />
-                                        <field name="name"  />
-                                        <field name="user_type_id"  />
+                                        <field name="code" />
+                                        <field name="name" />
+                                        <field name="user_type_id" />
                                     </tree>
                                 </field>
 
@@ -49,9 +77,9 @@
                             <page name="manufacturing_exp_page" string="Manufacturing Expenses">
                                 <field name="manufacturing_expense_account_ids" options="{'no_create': True}" widget="many2many">
                                     <tree >
-                                        <field name="code"  />
-                                        <field name="name"  />
-                                        <field name="user_type_id"  />
+                                        <field name="code" />
+                                        <field name="name" />
+                                        <field name="user_type_id" />
                                     </tree>
                                 </field>
                             </page>
