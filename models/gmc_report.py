@@ -588,30 +588,80 @@ class GmcReport(models.TransientModel):
             self.ending_material_stock_percent_a_year = 0
 
         # get amount of material_adjustment
-        mat_adj = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.material_adjustment_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
-             ])
 
-        self.material_adjustment = sum(mat_adj.mapped(
-            'debit')) - sum(mat_adj.mapped('credit'))
+        # get adjustment
+        if report_config.property_valuation == 'manual':
+            adjust_aml = self.env['account.move.line'].search(
+                ['&', '&',
+                 ('account_id', '=', akun_pembelian.id),
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value = sum(adjust_aml.mapped('balance'))
+        else:
+            adjust_aml = self.env['account.move.line'].search(
+                ['&', '&',
+                ('account_id', '=', akun_persediaan.id),
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to),
+                ('journal_id', '=', adjustment_journal.id)
+                ])
+            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value = sum(adjust_aml.mapped('balance'))
+
+        # mat_adj = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.material_adjustment_account_id.id),
+        #         ('date_maturity', '>=', self.date_from),
+        #         ('date_maturity', '<=', self.date_to)
+        #      ])
+
+        # self.material_adjustment = sum(mat_adj.mapped(
+        #     'debit')) - sum(mat_adj.mapped('credit'))
+        self.material_adjustment = adjust_mat_value
+
         if self.production_amount > 0:
             self.material_adjustment_percent = self.material_adjustment / \
                 self.production_amount * 100
         else:
             self.material_adjustment_percent = 0.0
 
-        mat_adj_a_year = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.material_adjustment_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
-             ])
 
-        self.material_adjustment_a_year = sum(mat_adj_a_year.mapped(
-            'debit')) - sum(mat_adj_a_year.mapped('credit'))
+        if report_config.property_valuation == 'manual':
+            adjust_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&',
+                 ('account_id', '=', akun_pembelian.id),
+                 ('date', '>', year_to_date),
+                ('date', '<=', current_year),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+        else:
+            adjust_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&',
+                ('account_id', '=', akun_persediaan.id),
+                ('date', '>', year_to_date),
+                ('date', '<=', current_year),
+                ('journal_id', '=', adjustment_journal.id)
+                ])
+            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+
+        # mat_adj_a_year = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.material_adjustment_account_id.id),
+        #         ('date_maturity', '>', year_to_date),
+        #         ('date_maturity', '<=', current_year)
+        #      ])
+
+        # self.material_adjustment_a_year = sum(mat_adj_a_year.mapped(
+        #     'debit')) - sum(mat_adj_a_year.mapped('credit'))
+        
+        self.material_adjustment_a_year = adjust_mat_value_a_year
+
         if self.production_amount_a_year > 0:
             self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
                 self.production_amount_a_year * 100
