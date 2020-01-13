@@ -611,143 +611,143 @@ class GmcReport(models.TransientModel):
             self.ending_material_stock_percent_a_year = 0
         # ---------------------------------------------------------------------------
 
-        # GET MATERIALS ADJUSTMENT
-        if report_config.property_valuation == 'manual':
-            adjust_aml = self.env['account.move.line'].search(
-                ['&', '&', '&',
-                 ('account_id', '=', akun_pembelian.id),
-                 ('date', '>=', self.date_from),
-                 ('date', '<=', self.date_to),
-                 ('journal_id', '=', adjustment_journal.id)
-                 ])
-            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
-            adjust_mat_value = sum(adjust_aml.mapped('balance'))
-        else:
-            adjust_aml = self.env['account.move.line'].search(
-                ['&', '&', '&',
-                 ('account_id', '=', akun_persediaan.id),
-                 ('date', '>=', self.date_from),
-                 ('date', '<=', self.date_to),
-                 ('journal_id', '=', adjustment_journal.id)
-                 ])
-            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
-            adjust_mat_value = sum(adjust_aml.mapped('balance'))
+        # # GET MATERIALS ADJUSTMENT
+        # if report_config.property_valuation == 'manual':
+        #     adjust_aml = self.env['account.move.line'].search(
+        #         ['&', '&', '&',
+        #          ('account_id', '=', akun_pembelian.id),
+        #          ('date', '>=', self.date_from),
+        #          ('date', '<=', self.date_to),
+        #          ('journal_id', '=', adjustment_journal.id)
+        #          ])
+        #     adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+        #     adjust_mat_value = sum(adjust_aml.mapped('balance'))
+        # else:
+        #     adjust_aml = self.env['account.move.line'].search(
+        #         ['&', '&', '&',
+        #          ('account_id', '=', akun_persediaan.id),
+        #          ('date', '>=', self.date_from),
+        #          ('date', '<=', self.date_to),
+        #          ('journal_id', '=', adjustment_journal.id)
+        #          ])
+        #     adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+        #     adjust_mat_value = sum(adjust_aml.mapped('balance'))
 
-        self.material_adjustment = adjust_mat_value
+        # self.material_adjustment = adjust_mat_value
 
-        if report_config.property_valuation == 'manual':
-            adjust_aml_a_year = self.env['account.move.line'].search(
-                ['&', '&', '&',
-                 ('account_id', '=', akun_pembelian.id),
-                 ('date', '>=', first_date_of_this_year),
-                 ('date', '<=', self.date_to),
-                 ('journal_id', '=', adjustment_journal.id)
-                 ])
-            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
-        else:
-            adjust_aml_a_year = self.env['account.move.line'].search(
-                ['&', '&', '&',
-                 ('account_id', '=', akun_persediaan.id),
-                 ('date', '>=', first_date_of_this_year),
-                 ('date', '<=', self.date_to),
-                 ('journal_id', '=', adjustment_journal.id)
-                 ])
-            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+        # if report_config.property_valuation == 'manual':
+        #     adjust_aml_a_year = self.env['account.move.line'].search(
+        #         ['&', '&', '&',
+        #          ('account_id', '=', akun_pembelian.id),
+        #          ('date', '>=', first_date_of_this_year),
+        #          ('date', '<=', self.date_to),
+        #          ('journal_id', '=', adjustment_journal.id)
+        #          ])
+        #     adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+        #     adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+        # else:
+        #     adjust_aml_a_year = self.env['account.move.line'].search(
+        #         ['&', '&', '&',
+        #          ('account_id', '=', akun_persediaan.id),
+        #          ('date', '>=', first_date_of_this_year),
+        #          ('date', '<=', self.date_to),
+        #          ('journal_id', '=', adjustment_journal.id)
+        #          ])
+        #     adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+        #     adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
 
-        self.material_adjustment_a_year = adjust_mat_value_a_year
+        # self.material_adjustment_a_year = adjust_mat_value_a_year
 
-        # GET RETURN MOVE
-        if report_config.property_valuation == 'manual':
-            payable_aml = self.env['account.move.line'].search(
-                ['&', '&', '&', '&',
-                    ('account_id', 'in', payable_accounts.ids),
-                    ('date', '>=', self.date_from),
-                    ('date', '<=', self.date_to),
-                    ('debit', '>', 0),
-                    ('journal_id', '=', purchase_journal.id)
-                 ])
-            payable_move = payable_aml.mapped('move_id')
-            payable_move = payable_move.filtered(
-                lambda mv: akun_pembelian.id in mv.line_ids.mapped('account_id').ids)
-            payable_move = payable_move.filtered(
-                lambda mv: mv.state == 'posted')
-            fix_payable_aml = payable_move.mapped('line_ids')
-            fix_payable_aml = fix_payable_aml.filtered(
-                lambda ln: ln.account_id.id == akun_pembelian.id)
-            total_raw_return = sum(fix_payable_aml.mapped('credit'))
-        else:
-            return_aml = self.env['account.move.line'].search(
-                ['&', '&', '&', '&',
-                    ('account_id', '=', akun_persediaan.id),
-                    ('date', '>=', self.date_from),
-                    ('date', '<=', self.date_to),
-                    ('credit', '>', 0),
-                    ('journal_id', '=', stock_journal.id)
-                 ])
-            return_move = return_aml.mapped('move_id')
-            return_move = return_move.filtered(
-                lambda mv: stock_input_akun.id in mv.line_ids.mapped('account_id').ids)
-            return_move = return_move.filtered(lambda mv: mv.state == 'posted')
-            fix_return_aml = return_move.mapped('line_ids')
-            fix_return_aml = fix_return_aml.filtered(
-                lambda ln: ln.account_id.id == akun_persediaan.id)
-            total_raw_return = sum(fix_return_aml.mapped('credit'))
+        # # GET RETURN MOVE
+        # if report_config.property_valuation == 'manual':
+        #     payable_aml = self.env['account.move.line'].search(
+        #         ['&', '&', '&', '&',
+        #             ('account_id', 'in', payable_accounts.ids),
+        #             ('date', '>=', self.date_from),
+        #             ('date', '<=', self.date_to),
+        #             ('debit', '>', 0),
+        #             ('journal_id', '=', purchase_journal.id)
+        #          ])
+        #     payable_move = payable_aml.mapped('move_id')
+        #     payable_move = payable_move.filtered(
+        #         lambda mv: akun_pembelian.id in mv.line_ids.mapped('account_id').ids)
+        #     payable_move = payable_move.filtered(
+        #         lambda mv: mv.state == 'posted')
+        #     fix_payable_aml = payable_move.mapped('line_ids')
+        #     fix_payable_aml = fix_payable_aml.filtered(
+        #         lambda ln: ln.account_id.id == akun_pembelian.id)
+        #     total_raw_return = sum(fix_payable_aml.mapped('credit'))
+        # else:
+        #     return_aml = self.env['account.move.line'].search(
+        #         ['&', '&', '&', '&',
+        #             ('account_id', '=', akun_persediaan.id),
+        #             ('date', '>=', self.date_from),
+        #             ('date', '<=', self.date_to),
+        #             ('credit', '>', 0),
+        #             ('journal_id', '=', stock_journal.id)
+        #          ])
+        #     return_move = return_aml.mapped('move_id')
+        #     return_move = return_move.filtered(
+        #         lambda mv: stock_input_akun.id in mv.line_ids.mapped('account_id').ids)
+        #     return_move = return_move.filtered(lambda mv: mv.state == 'posted')
+        #     fix_return_aml = return_move.mapped('line_ids')
+        #     fix_return_aml = fix_return_aml.filtered(
+        #         lambda ln: ln.account_id.id == akun_persediaan.id)
+        #     total_raw_return = sum(fix_return_aml.mapped('credit'))
 
-        self.material_adjustment += total_raw_return
+        # self.material_adjustment += total_raw_return
 
-        total_raw_return_a_year = 0
-        if report_config.property_valuation == 'manual':
-            payable_aml_a_year = self.env['account.move.line'].search(
-                ['&', '&', '&', '&',
-                    ('account_id', 'in', payable_accounts.ids),
-                    ('date', '>=', first_date_of_this_year),
-                    ('date', '<=', self.date_to),
-                    ('debit', '>', 0),
-                    ('journal_id', '=', purchase_journal.id)
-                 ])
-            payable_move = payable_aml_a_year.mapped('move_id')
-            payable_move = payable_move.filtered(
-                lambda mv: akun_pembelian.id in mv.line_ids.mapped('account_id').ids)
-            payable_move = payable_move.filtered(
-                lambda mv: mv.state == 'posted')
-            fix_payable_aml = payable_move.mapped('line_ids')
-            fix_payable_aml = fix_payable_aml.filtered(
-                lambda ln: ln.account_id.id == akun_pembelian.id)
-            total_raw_return_a_year = sum(fix_payable_aml.mapped('credit'))
-        else:
-            return_aml = self.env['account.move.line'].search(
-                ['&', '&', '&', '&',
-                    ('account_id', '=', akun_persediaan.id),
-                    ('date', '>=', first_date_of_this_year),
-                    ('date', '<=', self.date_to),
-                    ('credit', '>', 0),
-                    ('journal_id', '=', stock_journal.id)
-                 ])
-            return_move = return_aml.mapped('move_id')
-            return_move = return_move.filtered(
-                lambda mv: stock_input_akun.id in mv.line_ids.mapped('account_id').ids)
-            return_move = return_move.filtered(lambda mv: mv.state == 'posted')
-            fix_return_aml = return_move.mapped('line_ids')
-            fix_return_aml = fix_return_aml.filtered(
-                lambda ln: ln.account_id.id == akun_persediaan.id)
-            total_raw_return_a_year = sum(fix_return_aml.mapped('credit'))
+        # total_raw_return_a_year = 0
+        # if report_config.property_valuation == 'manual':
+        #     payable_aml_a_year = self.env['account.move.line'].search(
+        #         ['&', '&', '&', '&',
+        #             ('account_id', 'in', payable_accounts.ids),
+        #             ('date', '>=', first_date_of_this_year),
+        #             ('date', '<=', self.date_to),
+        #             ('debit', '>', 0),
+        #             ('journal_id', '=', purchase_journal.id)
+        #          ])
+        #     payable_move = payable_aml_a_year.mapped('move_id')
+        #     payable_move = payable_move.filtered(
+        #         lambda mv: akun_pembelian.id in mv.line_ids.mapped('account_id').ids)
+        #     payable_move = payable_move.filtered(
+        #         lambda mv: mv.state == 'posted')
+        #     fix_payable_aml = payable_move.mapped('line_ids')
+        #     fix_payable_aml = fix_payable_aml.filtered(
+        #         lambda ln: ln.account_id.id == akun_pembelian.id)
+        #     total_raw_return_a_year = sum(fix_payable_aml.mapped('credit'))
+        # else:
+        #     return_aml = self.env['account.move.line'].search(
+        #         ['&', '&', '&', '&',
+        #             ('account_id', '=', akun_persediaan.id),
+        #             ('date', '>=', first_date_of_this_year),
+        #             ('date', '<=', self.date_to),
+        #             ('credit', '>', 0),
+        #             ('journal_id', '=', stock_journal.id)
+        #          ])
+        #     return_move = return_aml.mapped('move_id')
+        #     return_move = return_move.filtered(
+        #         lambda mv: stock_input_akun.id in mv.line_ids.mapped('account_id').ids)
+        #     return_move = return_move.filtered(lambda mv: mv.state == 'posted')
+        #     fix_return_aml = return_move.mapped('line_ids')
+        #     fix_return_aml = fix_return_aml.filtered(
+        #         lambda ln: ln.account_id.id == akun_persediaan.id)
+        #     total_raw_return_a_year = sum(fix_return_aml.mapped('credit'))
 
-        self.material_adjustment_a_year += total_raw_return_a_year
+        # self.material_adjustment_a_year += total_raw_return_a_year
 
-        if self.production_amount > 0:
-            self.material_adjustment_percent = self.material_adjustment / \
-                self.production_amount * 100
-        else:
-            self.material_adjustment_percent = 0.0
+        # if self.production_amount > 0:
+        #     self.material_adjustment_percent = self.material_adjustment / \
+        #         self.production_amount * 100
+        # else:
+        #     self.material_adjustment_percent = 0.0
 
-        if self.production_amount_a_year > 0:
-            self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
-                self.production_amount_a_year * 100
-        else:
-            self.material_adjustment_percent_a_year = 0
-        # ---------------------------------------------------------------------------
+        # if self.production_amount_a_year > 0:
+        #     self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
+        #         self.production_amount_a_year * 100
+        # else:
+        #     self.material_adjustment_percent_a_year = 0
+        # # ---------------------------------------------------------------------------
 
         # GET BEGINING WORK IN PROCESS WIP
         begining_wip_aml = self.env['account.move.line'].search(
