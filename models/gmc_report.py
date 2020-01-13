@@ -611,52 +611,52 @@ class GmcReport(models.TransientModel):
             self.ending_material_stock_percent_a_year = 0
         # ---------------------------------------------------------------------------
 
-        # # GET MATERIALS ADJUSTMENT
-        # if report_config.property_valuation == 'manual':
-        #     adjust_aml = self.env['account.move.line'].search(
-        #         ['&', '&', '&',
-        #          ('account_id', '=', akun_pembelian.id),
-        #          ('date', '>=', self.date_from),
-        #          ('date', '<=', self.date_to),
-        #          ('journal_id', '=', adjustment_journal.id)
-        #          ])
-        #     adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
-        #     adjust_mat_value = sum(adjust_aml.mapped('balance'))
-        # else:
-        #     adjust_aml = self.env['account.move.line'].search(
-        #         ['&', '&', '&',
-        #          ('account_id', '=', akun_persediaan.id),
-        #          ('date', '>=', self.date_from),
-        #          ('date', '<=', self.date_to),
-        #          ('journal_id', '=', adjustment_journal.id)
-        #          ])
-        #     adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
-        #     adjust_mat_value = sum(adjust_aml.mapped('balance'))
+        # GET MATERIALS ADJUSTMENT
+        if report_config.property_valuation == 'manual':
+            adjust_aml = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                 ('account_id', '=', akun_pembelian.id),
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value = sum(adjust_aml.mapped('balance'))
+        else:
+            adjust_aml = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                 ('account_id', '=', akun_persediaan.id),
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value = sum(adjust_aml.mapped('balance'))
 
-        # self.material_adjustment = adjust_mat_value
+        self.material_adjustment = adjust_mat_value
 
-        # if report_config.property_valuation == 'manual':
-        #     adjust_aml_a_year = self.env['account.move.line'].search(
-        #         ['&', '&', '&',
-        #          ('account_id', '=', akun_pembelian.id),
-        #          ('date', '>=', first_date_of_this_year),
-        #          ('date', '<=', self.date_to),
-        #          ('journal_id', '=', adjustment_journal.id)
-        #          ])
-        #     adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-        #     adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
-        # else:
-        #     adjust_aml_a_year = self.env['account.move.line'].search(
-        #         ['&', '&', '&',
-        #          ('account_id', '=', akun_persediaan.id),
-        #          ('date', '>=', first_date_of_this_year),
-        #          ('date', '<=', self.date_to),
-        #          ('journal_id', '=', adjustment_journal.id)
-        #          ])
-        #     adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-        #     adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+        if report_config.property_valuation == 'manual':
+            adjust_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                 ('account_id', '=', akun_pembelian.id),
+                 ('date', '>=', first_date_of_this_year),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+        else:
+            adjust_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                 ('account_id', '=', akun_persediaan.id),
+                 ('date', '>=', first_date_of_this_year),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
 
-        # self.material_adjustment_a_year = adjust_mat_value_a_year
+        self.material_adjustment_a_year = adjust_mat_value_a_year
 
         # # GET RETURN MOVE
         # if report_config.property_valuation == 'manual':
