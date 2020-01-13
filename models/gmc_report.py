@@ -587,12 +587,14 @@ class GmcReport(models.TransientModel):
 
         # GET ENDING MATERIAL STOCK
         ending_mat = self.env['account.move.line'].search(
-            [('account_id', '=', akun_persediaan.id), 
-            ('date', '<=', self.date_to)])
+            [('account_id', '=', akun_persediaan.id),
+             ('date', '<=', self.date_to)])
         ending_mat = ending_mat.filtered(lambda x: x.move_id.state == 'posted')
         print('ENDING MATERIAL DEBIT : ' + str(sum(ending_mat.mapped('debit'))))
-        print('ENDING MATERIAL CREDIT : ' + str(sum(ending_mat.mapped('credit'))))
-        print('ENDING MATERIAL BALANCE : ' + str(sum(ending_mat.mapped('balance'))))
+        print('ENDING MATERIAL CREDIT : ' +
+              str(sum(ending_mat.mapped('credit'))))
+        print('ENDING MATERIAL BALANCE : ' +
+              str(sum(ending_mat.mapped('balance'))))
         ending_mat_value = sum(ending_mat.mapped('balance'))
         self.ending_material_stock = ending_mat_value
 
@@ -734,7 +736,8 @@ class GmcReport(models.TransientModel):
                 lambda ln: ln.account_id.id == akun_persediaan.id)
             total_raw_return_a_year = sum(fix_return_aml.mapped('credit'))
 
-        self.material_adjustment_a_year = self.material_adjustment_a_year +  total_raw_return_a_year
+        self.material_adjustment_a_year = self.material_adjustment_a_year + \
+            total_raw_return_a_year
 
         if self.production_amount > 0:
             self.material_adjustment_percent = self.material_adjustment / \
