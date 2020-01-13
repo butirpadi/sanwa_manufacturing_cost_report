@@ -30,6 +30,7 @@
                                     <group>
                                         <field name="persediaan_barang_dalam_proses_account_id" options="{'no_open': True, 'no_create': True}" />
                                         <field name="persediaan_barang_jadi_account_id" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="process_cost_account_id" options="{ 'no_open': True, 'no_create_edit': True}" />
                                     </group>
                                     <group>
                                         <field name="pembelian_material_account_id" options="{'no_open': True, 'no_create': True}" string="Akun Pembelian Material (periodic)" />
