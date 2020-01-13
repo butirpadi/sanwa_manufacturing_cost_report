@@ -8,6 +8,21 @@ class OperatingExpenseReportConfig(models.Model):
         string='Name', default="Operationg Expenses Report Config")
     net_sales_account_id = fields.Many2one(
         'account.account', string='Net Sales Account')
+    
+    sales_account_ids = fields.Many2many(
+        comodel_name='account.account',
+        relation='opr_exp_sales_account_account_rel',
+        column1='opr_exp_report_id',
+        column2='account_id',
+        string='Sales Accounts'
+    )
+    sales_return_ids = fields.Many2many(
+        comodel_name='account.account',
+        relation='opr_exp_sales_return_account_rel',
+        column1='opr_exp_report_id',
+        column2='account_id',
+        string='Sales Return Accounts'
+    )
 
     payroll_ids = fields.Many2many(
         comodel_name='account.account',

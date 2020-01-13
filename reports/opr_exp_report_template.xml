@@ -49,7 +49,8 @@
                                     <tbody>
                                         <tr>
                                             <td >
-                                                <strong t-field="doc.net_sales_account_id.name" />
+                                                <!-- <strong t-field="doc.net_sales_account_id.name" /> -->
+                                                <strong>Net Sales</strong>
                                             </td>
                                             <td class="text-right">
                                                 <strong t-esc="'{0:,.2f}'.format(doc.net_sales_amount)" />

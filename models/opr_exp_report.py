@@ -60,29 +60,57 @@ class OperatingExpenseReport(models.TransientModel):
                                 self.env.user.company_id.fiscalyear_last_day, 0, 0, 0)
         delta = relativedelta(months=12)
         satu_tahun_lalu = current_year - delta
+        first_date_of_this_year = datetime(self.date_from.year, 1, 1, 0, 0, 0) # diganti ini untuk satu tahun ini
 
         # get net sales
         self.net_sales_account_id = report_config.net_sales_account_id.id
 
-        net_sl_amt = self.env['account.move.line'].search(
+        sales_amount_aml = self.env['account.move.line'].search(
             ['&', '&',
-                ('account_id', '=', self.net_sales_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
+                ('account_id', 'in', report_config.sales_account_ids.ids),
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to)
              ])
-
-        self.net_sales_amount = sum(net_sl_amt.mapped(
-            'debit')) - sum(net_sl_amt.mapped('credit'))
-
-        net_sl_amt_a_year = self.env['account.move.line'].search(
+        sales_amount = sum(sales_amount_aml.mapped('credit'))
+        
+        sales_return_amount_aml = self.env['account.move.line'].search(
             ['&', '&',
-                ('account_id', '=', self.net_sales_account_id.id),
-                ('date_maturity', '>', satu_tahun_lalu),
-                ('date_maturity', '<=', current_year)
+                ('account_id', 'in', report_config.sales_return_ids.ids),
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to)
              ])
+        sales_return_amount = sum(sales_return_amount_aml.mapped('debit'))
 
-        self.net_sales_amount_a_year = sum(net_sl_amt_a_year.mapped(
-            'debit')) - sum(net_sl_amt_a_year.mapped('credit'))
+        self.net_sales_amount = sales_amount - sales_return_amount
+        # net_sl_amt = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.net_sales_account_id.id),
+        #         ('date', '>=', self.date_from),
+        #         ('date', '<=', self.date_to)
+        #      ])
+        # self.net_sales_amount = sum(net_sl_amt.mapped(
+        #     'debit')) - sum(net_sl_amt.mapped('credit'))
+        # self.net_sales_amount_a_year = sum(net_sl_amt_a_year.mapped(
+        #     'debit')) - sum(net_sl_amt_a_year.mapped('credit'))
+
+        sales_amount_a_year_aml = self.env['account.move.line'].search(
+            ['&', '&',
+                ('account_id', 'in', report_config.sales_account_ids.ids),
+                ('date', '>', first_date_of_this_year),
+                ('date', '<=', self.date_to)
+             ])
+        sales_amount_a_year = sum(sales_amount_a_year_aml.mapped('credit'))
+
+        sales_return_amount_a_year_aml = self.env['account.move.line'].search(
+            ['&', '&',
+                ('account_id', 'in', report_config.sales_return_ids.ids),
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to)
+             ])
+        sales_return_amount_a_year = sum(sales_return_amount_a_year_aml.mapped('debit'))
+    
+
+        self.net_sales_amount_a_year = sales_amount_a_year - sales_return_amount_a_year
 
         # ********************************************
         # # Get Payroll Expenses
@@ -94,8 +122,8 @@ class OperatingExpenseReport(models.TransientModel):
             acc_amls = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>=', self.date_from),
-                 ('date_maturity', '<=', self.date_to)
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to)
                  ])
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
@@ -110,8 +138,8 @@ class OperatingExpenseReport(models.TransientModel):
             acc_amls_a_year = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>', satu_tahun_lalu),
-                 ('date_maturity', '<=', current_year)
+                 ('date', '>', first_date_of_this_year),
+                 ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
@@ -159,8 +187,8 @@ class OperatingExpenseReport(models.TransientModel):
             acc_amls = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>=', self.date_from),
-                 ('date_maturity', '<=', self.date_to)
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to)
                  ])
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
@@ -175,8 +203,8 @@ class OperatingExpenseReport(models.TransientModel):
             acc_amls_a_year = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>', satu_tahun_lalu),
-                 ('date_maturity', '<=', current_year)
+                 ('date', '>', first_date_of_this_year),
+                 ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
@@ -224,8 +252,8 @@ class OperatingExpenseReport(models.TransientModel):
             acc_amls = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>=', self.date_from),
-                 ('date_maturity', '<=', self.date_to)
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to)
                  ])
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
@@ -240,8 +268,8 @@ class OperatingExpenseReport(models.TransientModel):
             acc_amls_a_year = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>', satu_tahun_lalu),
-                 ('date_maturity', '<=', current_year)
+                 ('date', '>', first_date_of_this_year),
+                 ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
