@@ -587,8 +587,12 @@ class GmcReport(models.TransientModel):
 
         # GET ENDING MATERIAL STOCK
         ending_mat = self.env['account.move.line'].search(
-            [('account_id', '=', akun_persediaan.id), ('date', '<=', self.date_to)])
+            [('account_id', '=', akun_persediaan.id), 
+            ('date', '<=', self.date_to)])
         ending_mat = ending_mat.filtered(lambda x: x.move_id.state == 'posted')
+        print('ENDING MATERIAL DEBIT : ' + str(sum(ending_mat.mapped('debit'))))
+        print('ENDING MATERIAL CREDIT : ' + str(sum(ending_mat.mapped('credit'))))
+        print('ENDING MATERIAL BALANCE : ' + str(sum(ending_mat.mapped('balance'))))
         ending_mat_value = sum(ending_mat.mapped('balance'))
         self.ending_material_stock = ending_mat_value
 
