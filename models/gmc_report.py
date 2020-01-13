@@ -736,18 +736,18 @@ class GmcReport(models.TransientModel):
 
         # self.material_adjustment_a_year += total_raw_return_a_year
 
-        # if self.production_amount > 0:
-        #     self.material_adjustment_percent = self.material_adjustment / \
-        #         self.production_amount * 100
-        # else:
-        #     self.material_adjustment_percent = 0.0
+        if self.production_amount > 0:
+            self.material_adjustment_percent = self.material_adjustment / \
+                self.production_amount * 100
+        else:
+            self.material_adjustment_percent = 0.0
 
-        # if self.production_amount_a_year > 0:
-        #     self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
-        #         self.production_amount_a_year * 100
-        # else:
-        #     self.material_adjustment_percent_a_year = 0
-        # # ---------------------------------------------------------------------------
+        if self.production_amount_a_year > 0:
+            self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
+                self.production_amount_a_year * 100
+        else:
+            self.material_adjustment_percent_a_year = 0
+        # ---------------------------------------------------------------------------
 
         # GET BEGINING WORK IN PROCESS WIP
         begining_wip_aml = self.env['account.move.line'].search(
