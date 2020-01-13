@@ -391,7 +391,10 @@ class GmcReport(models.TransientModel):
         delta = relativedelta(months=12)
         # year_to_date = current_year - delta # satu tahun lalu
         # year_to_date diartikan sejauh tahun ini, jadi di ambil awal tahun ini 1 januari.
-        year_to_date = datetime(self.date_from.year, 1, 1, 0, 0, 0)
+        year_to_date = datetime(self.date_from.year, 1,
+                                1, 0, 0, 0)  # deprecated
+        # replace year_to_date dengan nama lain
+        first_date_of_this_year = datetime(self.date_from.year, 1, 1, 0, 0, 0)
 
         self.production_amount_account_id = gmc_report_config.production_amount_account_id.id
         self.begining_material_stock_account_id = gmc_report_config.begining_material_stock_account_id.id
@@ -435,6 +438,7 @@ class GmcReport(models.TransientModel):
         # self.begining_material_stock = sum(bgn_mat_stk.mapped(
         #     'debit')) - sum(bgn_mat_stk.mapped('credit'))
 
+        #  BEGINING MATERIAL STOCK
         begin_mat = self.env['account.move.line'].search(
             [('account_id', '=', akun_persediaan.id), ('date', '<', self.date_from)])
         begin_mat = begin_mat.filtered(lambda x: x.move_id.state == 'posted')
@@ -449,31 +453,21 @@ class GmcReport(models.TransientModel):
 
         begin_mat_a_year = self.env['account.move.line'].search(
             [('account_id', '=', akun_persediaan.id),
-                ('date', '<', year_to_date)
+                ('date', '<', first_date_of_this_year)
              ])
         begin_mat_a_year = begin_mat_a_year.filtered(
             lambda x: x.move_id.state == 'posted')
         begining_mat_a_year_value = sum(begin_mat_a_year.mapped('balance'))
         self.begining_material_stock_a_year = begining_mat_a_year_value
 
-        # bgn_mat_stk_a_year = self.env['account.move.line'].search(
-        #     ['&', '&',
-        #         ('account_id', '=', self.begining_material_stock_account_id.id),
-        #         ('date_maturity', '>', year_to_date),
-        #         ('date_maturity', '<=', current_year)
-        #      ])
-
-        # self.begining_material_stock_a_year = sum(bgn_mat_stk_a_year.mapped(
-        #     'debit')) - sum(bgn_mat_stk_a_year.mapped('credit'))
-
         if self.production_amount_a_year > 0:
             self.begining_material_stock_percent_a_year = self.begining_material_stock_a_year / \
                 self.production_amount_a_year * 100
         else:
             self.begining_material_stock_percent_a_year = 0.0
+        # ---------------------------------------------------------------------------
 
-        # get amount of material_net_purchased
-        # get purchased material
+        # GET NET MATERIAL PURCHASED
         if report_config.property_valuation == 'manual':
             purch_aml = self.env['account.move.line'].search(
                 ['&', '&', '&', '&',
@@ -489,23 +483,13 @@ class GmcReport(models.TransientModel):
         else:
             purch_aml = self.env['account.move.line'].search(
                 ['&', '&', '&',
-                ('account_id', '=', akun_persediaan.id),
-                ('date', '>=', self.date_from),
-                ('date', '<=', self.date_to), ('debit', '>', 0),
-                ('journal_id', '=', stock_journal.id),
-                ])
+                 ('account_id', '=', akun_persediaan.id),
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to), ('debit', '>', 0),
+                 ('journal_id', '=', stock_journal.id),
+                 ])
             purch_aml.filtered(lambda ml: ml.move_id.state == 'posted')
             purch_mat_value = sum(purch_aml.mapped('debit'))
-
-        # mat_net_purch = self.env['account.move.line'].search(
-        #     ['&', '&',
-        #         ('account_id', '=', self.material_net_purchased_account_id.id),
-        #         ('date_maturity', '>=', self.date_from),
-        #         ('date_maturity', '<=', self.date_to)
-        #      ])
-
-        # self.material_net_purchased = sum(mat_net_purch.mapped(
-        #     'debit')) - sum(mat_net_purch.mapped('credit'))
 
         self.material_net_purchased = purch_mat_value
 
@@ -519,8 +503,9 @@ class GmcReport(models.TransientModel):
             purch_aml_a_year = self.env['account.move.line'].search(
                 ['&', '&', '&', '&',
                     ('account_id', '=', akun_pembelian.id),
-                    ('date', '>', year_to_date),
-                    ('date', '<=', current_year),
+                    # sepanjang tahun ini artinya, awal tahun sampai akhir tanggal yang di tentukan di wizard
+                    ('date', '>=', first_date_of_this_year),
+                    ('date', '<=', self.date_to),
                     ('debit', '>', 0),
                     ('journal_id', '=', purchase_journal.id)])
             purch_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
@@ -530,14 +515,45 @@ class GmcReport(models.TransientModel):
         else:
             purch_aml_a_year = self.env['account.move.line'].search(
                 ['&', '&', '&',
-                ('account_id', '=', akun_persediaan.id),
-                ('date', '>', year_to_date),
-                ('date', '<=', current_year),
-                ('debit', '>', 0),
-                ('journal_id', '=', stock_journal.id),
-                ])
+                    ('account_id', '=', akun_persediaan.id),
+                    ('date', '>=', first_date_of_this_year),
+                    ('date', '<=', self.date_to),
+                    ('debit', '>', 0),
+                    ('journal_id', '=', stock_journal.id),
+                 ])
             purch_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
             purch_mat_value_a_year = sum(purch_aml_a_year.mapped('debit'))
+
+        self.material_net_purchased_a_year = purch_mat_value_a_year
+
+        if self.production_amount_a_year > 0:
+            self.material_net_purchased_percent_a_year = self.material_net_purchased_a_year / \
+                self.production_amount_a_year * 100
+        else:
+            self.material_net_purchased_percent_a_year = 0
+        # ---------------------------------------------------------------------------
+
+        # bgn_mat_stk_a_year = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.begining_material_stock_account_id.id),
+        #         ('date_maturity', '>', year_to_date),
+        #         ('date_maturity', '<=', current_year)
+        #      ])
+
+        # self.begining_material_stock_a_year = sum(bgn_mat_stk_a_year.mapped(
+        #     'debit')) - sum(bgn_mat_stk_a_year.mapped('credit'))
+
+        # get amount of material_net_purchased
+
+        # mat_net_purch = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.material_net_purchased_account_id.id),
+        #         ('date_maturity', '>=', self.date_from),
+        #         ('date_maturity', '<=', self.date_to)
+        #      ])
+
+        # self.material_net_purchased = sum(mat_net_purch.mapped(
+        #     'debit')) - sum(mat_net_purch.mapped('credit'))
 
         # mat_net_purch_a_year = self.env['account.move.line'].search(
         #     ['&', '&',
@@ -548,51 +564,53 @@ class GmcReport(models.TransientModel):
 
         # self.material_net_purchased_a_year = sum(mat_net_purch_a_year.mapped(
         #     'debit')) - sum(mat_net_purch_a_year.mapped('credit'))
-        self.material_net_purchased_a_year = purch_mat_value_a_year
 
-        if self.production_amount_a_year > 0:
-            self.material_net_purchased_percent_a_year = self.material_net_purchased_a_year / \
-                self.production_amount_a_year * 100
-        else:
-            self.material_net_purchased_percent_a_year = 0
+        # end_mat_stk = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.ending_material_stock_account_id.id),
+        #         ('date_maturity', '>=', self.date_from),
+        #         ('date_maturity', '<=', self.date_to)
+        #      ])
 
-        # get amount of material_net_purchased
-        end_mat_stk = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.ending_material_stock_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
-             ])
+        # self.ending_material_stock = sum(end_mat_stk.mapped(
+        #     'debit')) - sum(end_mat_stk.mapped('credit'))
 
-        self.ending_material_stock = sum(end_mat_stk.mapped(
-            'debit')) - sum(end_mat_stk.mapped('credit'))
+        # end_mat_stk_a_year = self.env['account.move.line'].search(
+        #     ['&', '&',
+        #         ('account_id', '=', self.ending_material_stock_account_id.id),
+        #         ('date_maturity', '>', year_to_date),
+        #         ('date_maturity', '<=', current_year)
+        #      ])
+
+        # self.ending_material_stock_a_year = sum(end_mat_stk_a_year.mapped(
+        #     'debit')) - sum(end_mat_stk_a_year.mapped('credit'))
+
+        # GET ENDING MATERIAL STOCK
+        ending_mat = self.env['account.move.line'].search(
+            [('account_id', '=', akun_persediaan.id), ('date', '<=', self.date_to)])
+        ending_mat = ending_mat.filtered(lambda x: x.move_id.state == 'posted')
+        ending_mat_value = sum(ending_mat.mapped('balance'))
+        self.ending_material_stock = ending_mat_value
+
         if self.production_amount > 0:
             self.ending_material_stock_percent = self.ending_material_stock / \
                 self.production_amount * 100
         else:
             self.ending_material_stock_percent = 0.0
 
-        end_mat_stk_a_year = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.ending_material_stock_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
-             ])
+        self.ending_material_stock_a_year = ending_mat_value
 
-        self.ending_material_stock_a_year = sum(end_mat_stk_a_year.mapped(
-            'debit')) - sum(end_mat_stk_a_year.mapped('credit'))
         if self.production_amount_a_year > 0:
             self.ending_material_stock_percent_a_year = self.ending_material_stock_a_year / \
                 self.production_amount_a_year * 100
         else:
             self.ending_material_stock_percent_a_year = 0
+        # ---------------------------------------------------------------------------
 
-        # get amount of material_adjustment
-
-        # get adjustment
+        # GET MATERIALS ADJUSTMENT
         if report_config.property_valuation == 'manual':
             adjust_aml = self.env['account.move.line'].search(
-                ['&', '&',
+                ['&', '&', '&',
                  ('account_id', '=', akun_pembelian.id),
                  ('date', '>=', self.date_from),
                  ('date', '<=', self.date_to),
@@ -602,25 +620,117 @@ class GmcReport(models.TransientModel):
             adjust_mat_value = sum(adjust_aml.mapped('balance'))
         else:
             adjust_aml = self.env['account.move.line'].search(
-                ['&', '&',
-                ('account_id', '=', akun_persediaan.id),
-                ('date', '>=', self.date_from),
-                ('date', '<=', self.date_to),
-                ('journal_id', '=', adjustment_journal.id)
-                ])
+                ['&', '&', '&',
+                 ('account_id', '=', akun_persediaan.id),
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
             adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
             adjust_mat_value = sum(adjust_aml.mapped('balance'))
 
-        # mat_adj = self.env['account.move.line'].search(
-        #     ['&', '&',
-        #         ('account_id', '=', self.material_adjustment_account_id.id),
-        #         ('date_maturity', '>=', self.date_from),
-        #         ('date_maturity', '<=', self.date_to)
-        #      ])
-
-        # self.material_adjustment = sum(mat_adj.mapped(
-        #     'debit')) - sum(mat_adj.mapped('credit'))
         self.material_adjustment = adjust_mat_value
+
+        if report_config.property_valuation == 'manual':
+            adjust_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                 ('account_id', '=', akun_pembelian.id),
+                 ('date', '>=', first_date_of_this_year),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+        else:
+            adjust_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                 ('account_id', '=', akun_persediaan.id),
+                 ('date', '>=', first_date_of_this_year),
+                 ('date', '<=', self.date_to),
+                 ('journal_id', '=', adjustment_journal.id)
+                 ])
+            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
+
+        self.material_adjustment_a_year = adjust_mat_value_a_year
+
+        # GET RETURN MOVE
+        if report_config.property_valuation == 'manual':
+            payable_aml = self.env['account.move.line'].search(
+                ['&', '&', '&', '&',
+                    ('account_id', 'in', payable_accounts.ids),
+                    ('date', '>=', self.date_from),
+                    ('date', '<=', self.date_to),
+                    ('debit', '>', 0),
+                    ('journal_id', '=', purchase_journal.id)
+                 ])
+            payable_move = payable_aml.mapped('move_id')
+            payable_move = payable_move.filtered(
+                lambda mv: akun_pembelian.id in mv.line_ids.mapped('account_id').ids)
+            payable_move = payable_move.filtered(
+                lambda mv: mv.state == 'posted')
+            fix_payable_aml = payable_move.mapped('line_ids')
+            fix_payable_aml = fix_payable_aml.filtered(
+                lambda ln: ln.account_id.id == akun_pembelian.id)
+            total_raw_return = sum(fix_payable_aml.mapped('credit'))
+        else:
+            return_aml = self.env['account.move.line'].search(
+                ['&', '&', '&', '&',
+                    ('account_id', '=', akun_persediaan.id),
+                    ('date', '>=', self.date_from),
+                    ('date', '<=', self.date_to),
+                    ('credit', '>', 0),
+                    ('journal_id', '=', stock_journal.id)
+                 ])
+            return_move = return_aml.mapped('move_id')
+            return_move = return_move.filtered(
+                lambda mv: stock_input_akun.id in mv.line_ids.mapped('account_id').ids)
+            return_move = return_move.filtered(lambda mv: mv.state == 'posted')
+            fix_return_aml = return_move.mapped('line_ids')
+            fix_return_aml = fix_return_aml.filtered(
+                lambda ln: ln.account_id.id == akun_persediaan.id)
+            total_raw_return = sum(fix_return_aml.mapped('credit'))
+
+        self.material_adjustment += total_raw_return
+
+        total_raw_return_a_year = 0
+        if report_config.property_valuation == 'manual':
+            payable_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&', '&',
+                    ('account_id', 'in', payable_accounts.ids),
+                    ('date', '>=', first_date_of_this_year),
+                    ('date', '<=', self.date_to),
+                    ('debit', '>', 0),
+                    ('journal_id', '=', purchase_journal.id)
+                 ])
+            payable_move = payable_aml_a_year.mapped('move_id')
+            payable_move = payable_move.filtered(
+                lambda mv: akun_pembelian.id in mv.line_ids.mapped('account_id').ids)
+            payable_move = payable_move.filtered(
+                lambda mv: mv.state == 'posted')
+            fix_payable_aml = payable_move.mapped('line_ids')
+            fix_payable_aml = fix_payable_aml.filtered(
+                lambda ln: ln.account_id.id == akun_pembelian.id)
+            total_raw_return_a_year = sum(fix_payable_aml.mapped('credit'))
+        else:
+            return_aml = self.env['account.move.line'].search(
+                ['&', '&', '&', '&',
+                    ('account_id', '=', akun_persediaan.id),
+                    ('date', '>=', first_date_of_this_year),
+                    ('date', '<=', self.date_to),
+                    ('credit', '>', 0),
+                    ('journal_id', '=', stock_journal.id)
+                 ])
+            return_move = return_aml.mapped('move_id')
+            return_move = return_move.filtered(
+                lambda mv: stock_input_akun.id in mv.line_ids.mapped('account_id').ids)
+            return_move = return_move.filtered(lambda mv: mv.state == 'posted')
+            fix_return_aml = return_move.mapped('line_ids')
+            fix_return_aml = fix_return_aml.filtered(
+                lambda ln: ln.account_id.id == akun_persediaan.id)
+            total_raw_return_a_year = sum(fix_return_aml.mapped('credit'))
+
+        self.material_adjustment_a_year += total_raw_return_a_year
 
         if self.production_amount > 0:
             self.material_adjustment_percent = self.material_adjustment / \
@@ -628,102 +738,68 @@ class GmcReport(models.TransientModel):
         else:
             self.material_adjustment_percent = 0.0
 
-
-        if report_config.property_valuation == 'manual':
-            adjust_aml_a_year = self.env['account.move.line'].search(
-                ['&', '&',
-                 ('account_id', '=', akun_pembelian.id),
-                 ('date', '>', year_to_date),
-                ('date', '<=', current_year),
-                 ('journal_id', '=', adjustment_journal.id)
-                 ])
-            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
-        else:
-            adjust_aml_a_year = self.env['account.move.line'].search(
-                ['&', '&',
-                ('account_id', '=', akun_persediaan.id),
-                ('date', '>', year_to_date),
-                ('date', '<=', current_year),
-                ('journal_id', '=', adjustment_journal.id)
-                ])
-            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-            adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
-
-        # mat_adj_a_year = self.env['account.move.line'].search(
-        #     ['&', '&',
-        #         ('account_id', '=', self.material_adjustment_account_id.id),
-        #         ('date_maturity', '>', year_to_date),
-        #         ('date_maturity', '<=', current_year)
-        #      ])
-
-        # self.material_adjustment_a_year = sum(mat_adj_a_year.mapped(
-        #     'debit')) - sum(mat_adj_a_year.mapped('credit'))
-        
-        self.material_adjustment_a_year = adjust_mat_value_a_year
-
         if self.production_amount_a_year > 0:
             self.material_adjustment_percent_a_year = self.material_adjustment_a_year / \
                 self.production_amount_a_year * 100
         else:
             self.material_adjustment_percent_a_year = 0
+        # ---------------------------------------------------------------------------
 
-        # get amount of begining wip
-        bgn_wip = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.begining_work_in_process_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
+        # GET BEGINING WORK IN PROCESS WIP
+        begining_wip_aml = self.env['account.move.line'].search(
+            [('account_id', '=', report_config.persediaan_barang_dalam_proses_account_id.id),
+             ('date', '<', self.date_from)
              ])
+        begining_wip_aml = begining_wip_aml.filtered(
+            lambda x: x.move_id.state == 'posted')
+        begining_wip = sum(begining_wip_aml.mapped('balance'))
+        self.begining_work_in_process = begining_wip
 
-        self.begining_work_in_process = sum(bgn_wip.mapped(
-            'debit')) - sum(bgn_wip.mapped('credit'))
         if self.production_amount > 0:
             self.begining_work_in_process_percent = self.begining_work_in_process / \
                 self.production_amount * 100
         else:
             self.begining_work_in_process_percent = 0.0
 
-        bgn_wip_a_year = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.begining_work_in_process_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
+        begining_wip_aml_A_YEAR = self.env['account.move.line'].search(
+            [('account_id', '=', report_config.persediaan_barang_dalam_proses_account_id.id),
+             ('date', '<', first_date_of_this_year)
              ])
+        begining_wip_aml_A_YEAR = begining_wip_aml_A_YEAR.filtered(
+            lambda x: x.move_id.state == 'posted')
+        begining_wip_a_year = sum(begining_wip_aml_A_YEAR.mapped('balance'))
+        self.begining_work_in_process_a_year = begining_wip_a_year
 
-        self.begining_work_in_process_a_year = sum(bgn_wip_a_year.mapped(
-            'debit')) - sum(bgn_wip_a_year.mapped('credit'))
         if self.production_amount_a_year > 0:
             self.begining_work_in_process_percent_a_year = self.begining_work_in_process_a_year / \
                 self.production_amount_a_year * 100
         else:
             self.begining_work_in_process_percent_a_year = 0
+        # ---------------------------------------------------------------------------
 
-        # get amount of ending wip
-        end_wip = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.ending_work_in_process_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
+        # GET ENDING WORK IN PROCESS WIP
+        ending_wip_aml = self.env['account.move.line'].search(
+            [('account_id', '=', report_config.persediaan_barang_dalam_proses_account_id.id),
+             ('date', '<=', self.date_to)
              ])
+        ending_wip_aml = ending_wip_aml.filtered(
+            lambda x: x.move_id.state == 'posted')
+        self.ending_work_in_process = sum(ending_wip_aml.mapped('balance'))
 
-        self.ending_work_in_process = sum(end_wip.mapped(
-            'debit')) - sum(end_wip.mapped('credit'))
         if self.production_amount > 0:
             self.ending_work_in_process_percent = self.ending_work_in_process / \
                 self.production_amount * 100
         else:
             self.ending_work_in_process_percent = 0.0
 
-        end_wip_a_year = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.ending_work_in_process_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
+        ending_wip_aml_A_YEAR = self.env['account.move.line'].search(
+            [('account_id', '=', report_config.persediaan_barang_dalam_proses_account_id.id),
+             ('date', '<=', self.date_to)
              ])
-
-        self.ending_work_in_process_a_year = sum(end_wip_a_year.mapped(
-            'debit')) - sum(end_wip_a_year.mapped('credit'))
+        ending_wip_aml_A_YEAR = ending_wip_aml_A_YEAR.filtered(
+            lambda x: x.move_id.state == 'posted')
+        self.ending_work_in_process_a_year = sum(
+            ending_wip_aml_A_YEAR.mapped('balance'))
 
         if self.production_amount_a_year > 0:
             self.ending_work_in_process_percent_a_year = self.ending_work_in_process_a_year / \
@@ -731,35 +807,39 @@ class GmcReport(models.TransientModel):
         else:
             self.ending_work_in_process_percent_a_year = 0
 
-        # get amount of adjustment
-        adjs = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.adjustment_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
-             ])
+        # GET ADJUSTMENT WORK IN PROCESS WIP
+        adjs_wip_aml = self.env['account.move.line'].search([
+            '&', '&', '&',
+            ('account_id', '=',
+                 report_config.persediaan_barang_dalam_proses_account_id.id),
+            ('date', '>=', self.date_from),
+            ('date', '<=', self.date_to),
+            ('journal_id', '=', adjustment_journal.id)
+        ])
+        self.adjustment = sum(adjs_wip_aml.mapped('balance'))
 
-        self.adjustment = sum(adjs.mapped(
-            'debit')) - sum(adjs.mapped('credit'))
         if self.production_amount > 0:
             self.adjustment_percent = self.adjustment / self.production_amount * 100
         else:
             self.adjustment_percent = 0.0
 
-        adjs_a_year = self.env['account.move.line'].search(
-            ['&', '&',
-                ('account_id', '=', self.adjustment_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
-             ])
+        adjs_wip_aml_a_year = self.env['account.move.line'].search(
+            [
+                '&', '&', '&',
+                ('account_id', '=',
+                 report_config.persediaan_barang_dalam_proses_account_id.id),
+                ('date', '>=', first_date_of_this_year),
+                ('date', '<=', self.date_to),
+                ('journal_id', '=', adjustment_journal.id)
+            ])
+        self.adjustment_a_year = sum(adjs_wip_aml_a_year.mapped('balance'))
 
-        self.adjustment_a_year = sum(adjs_a_year.mapped(
-            'debit')) - sum(adjs_a_year.mapped('credit'))
         if self.production_amount_a_year > 0:
             self.adjustment_percent_a_year = self.adjustment_a_year / \
                 self.production_amount_a_year * 100
         else:
             self.adjustment_percent_a_year = 0
+        # ---------------------------------------------------------------------------
 
         # get amount of process cost
         proc_cost = self.env['account.move.line'].search(

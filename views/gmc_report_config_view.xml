@@ -32,8 +32,8 @@
                                         <field name="persediaan_barang_jadi_account_id" options="{'no_open': True, 'no_create': True}" />
                                     </group>
                                     <group>
-                                        <field name="pembelian_material_account_id" attrs="{'invisible': [('property_valuation','!=','manual')]}" options="{'no_open': True, 'no_create': True}" />
-                                        <field name="stock_input_account_id" attrs="{'invisible': [('property_valuation','!=','real_time')]}" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="pembelian_material_account_id" options="{'no_open': True, 'no_create': True}" string="Akun Pembelian Material (periodic)" />
+                                        <field name="stock_input_account_id"  options="{'no_open': True, 'no_create': True}" string="Stock Input Account (perpetual)" />
                                         <field name="persediaan_material_account_id" options="{'no_open': True, 'no_create': True}" />
                                     </group>
                                 </group>
