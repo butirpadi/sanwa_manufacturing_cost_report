@@ -410,8 +410,8 @@ class GmcReport(models.TransientModel):
         prd_amt = self.env['account.move.line'].search(
             ['&', '&',
                 ('account_id', '=', self.production_amount_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to)
              ])
 
         self.production_amount = sum(prd_amt.mapped(
@@ -420,8 +420,8 @@ class GmcReport(models.TransientModel):
         prd_amt_a_year = self.env['account.move.line'].search(
             ['&', '&',
                 ('account_id', '=', self.production_amount_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
+                ('date', '>', year_to_date),
+                ('date', '<=', current_year)
              ])
 
         self.production_amount_a_year = sum(prd_amt_a_year.mapped(
@@ -431,8 +431,8 @@ class GmcReport(models.TransientModel):
         # bgn_mat_stk = self.env['account.move.line'].search(
         #     ['&', '&',
         #         ('account_id', '=', self.begining_material_stock_account_id.id),
-        #         ('date_maturity', '>=', self.date_from),
-        #         ('date_maturity', '<=', self.date_to)
+        #         ('date', '>=', self.date_from),
+        #         ('date', '<=', self.date_to)
         #      ])
 
         # self.begining_material_stock = sum(bgn_mat_stk.mapped(
@@ -536,8 +536,8 @@ class GmcReport(models.TransientModel):
         # bgn_mat_stk_a_year = self.env['account.move.line'].search(
         #     ['&', '&',
         #         ('account_id', '=', self.begining_material_stock_account_id.id),
-        #         ('date_maturity', '>', year_to_date),
-        #         ('date_maturity', '<=', current_year)
+        #         ('date', '>', year_to_date),
+        #         ('date', '<=', current_year)
         #      ])
 
         # self.begining_material_stock_a_year = sum(bgn_mat_stk_a_year.mapped(
@@ -548,8 +548,8 @@ class GmcReport(models.TransientModel):
         # mat_net_purch = self.env['account.move.line'].search(
         #     ['&', '&',
         #         ('account_id', '=', self.material_net_purchased_account_id.id),
-        #         ('date_maturity', '>=', self.date_from),
-        #         ('date_maturity', '<=', self.date_to)
+        #         ('date', '>=', self.date_from),
+        #         ('date', '<=', self.date_to)
         #      ])
 
         # self.material_net_purchased = sum(mat_net_purch.mapped(
@@ -558,8 +558,8 @@ class GmcReport(models.TransientModel):
         # mat_net_purch_a_year = self.env['account.move.line'].search(
         #     ['&', '&',
         #         ('account_id', '=', self.material_net_purchased_account_id.id),
-        #         ('date_maturity', '>', year_to_date),
-        #         ('date_maturity', '<=', current_year)
+        #         ('date', '>', year_to_date),
+        #         ('date', '<=', current_year)
         #      ])
 
         # self.material_net_purchased_a_year = sum(mat_net_purch_a_year.mapped(
@@ -568,8 +568,8 @@ class GmcReport(models.TransientModel):
         # end_mat_stk = self.env['account.move.line'].search(
         #     ['&', '&',
         #         ('account_id', '=', self.ending_material_stock_account_id.id),
-        #         ('date_maturity', '>=', self.date_from),
-        #         ('date_maturity', '<=', self.date_to)
+        #         ('date', '>=', self.date_from),
+        #         ('date', '<=', self.date_to)
         #      ])
 
         # self.ending_material_stock = sum(end_mat_stk.mapped(
@@ -578,8 +578,8 @@ class GmcReport(models.TransientModel):
         # end_mat_stk_a_year = self.env['account.move.line'].search(
         #     ['&', '&',
         #         ('account_id', '=', self.ending_material_stock_account_id.id),
-        #         ('date_maturity', '>', year_to_date),
-        #         ('date_maturity', '<=', current_year)
+        #         ('date', '>', year_to_date),
+        #         ('date', '<=', current_year)
         #      ])
 
         # self.ending_material_stock_a_year = sum(end_mat_stk_a_year.mapped(
@@ -856,8 +856,8 @@ class GmcReport(models.TransientModel):
         proc_cost = self.env['account.move.line'].search(
             ['&', '&',
                 ('account_id', '=', self.process_cost_account_id.id),
-                ('date_maturity', '>=', self.date_from),
-                ('date_maturity', '<=', self.date_to)
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to)
              ])
 
         self.process_cost = sum(proc_cost.mapped(
@@ -870,8 +870,8 @@ class GmcReport(models.TransientModel):
         proc_cost_a_year = self.env['account.move.line'].search(
             ['&', '&',
                 ('account_id', '=', self.process_cost_account_id.id),
-                ('date_maturity', '>', year_to_date),
-                ('date_maturity', '<=', current_year)
+                ('date', '>', year_to_date),
+                ('date', '<=', current_year)
              ])
 
         self.process_cost_a_year = sum(proc_cost_a_year.mapped(
@@ -909,8 +909,8 @@ class GmcReport(models.TransientModel):
             acc_amls = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>=', self.date_from),
-                 ('date_maturity', '<=', self.date_to)
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to)
                  ])
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
@@ -925,8 +925,8 @@ class GmcReport(models.TransientModel):
             acc_amls_a_year = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>', year_to_date),
-                 ('date_maturity', '<=', current_year)
+                 ('date', '>', year_to_date),
+                 ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
@@ -969,8 +969,8 @@ class GmcReport(models.TransientModel):
             acc_amls = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>=', self.date_from),
-                 ('date_maturity', '<=', self.date_to)
+                 ('date', '>=', self.date_from),
+                 ('date', '<=', self.date_to)
                  ])
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
@@ -984,8 +984,8 @@ class GmcReport(models.TransientModel):
             acc_amls_a_year = self.env['account.move.line'].search(
                 ['&', '&',
                  ('account_id', '=', acc.id),
-                 ('date_maturity', '>', year_to_date),
-                 ('date_maturity', '<=', current_year)
+                 ('date', '>', year_to_date),
+                 ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
