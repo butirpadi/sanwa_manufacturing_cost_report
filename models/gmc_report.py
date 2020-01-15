@@ -603,7 +603,6 @@ class GmcReport(models.TransientModel):
         # GET ENDING MATERIAL STOCK
         ending_mat = self.env['account.move.line'].search(
             [
-                '&','&',
                 ('account_id', '=', akun_persediaan.id),
                 ('date', '<=', self.date_to),
                 # ('journal_id', '=', stock_journal.id),
