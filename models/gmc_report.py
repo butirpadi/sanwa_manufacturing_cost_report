@@ -520,13 +520,21 @@ class GmcReport(models.TransientModel):
             purch_mat_value_a_year = sum(purch_aml_a_year.mapped('debit'))
 
         else:
+            # purch_aml_a_year = self.env['account.move.line'].search(
+            #     ['&', '&', '&',
+            #         ('account_id', '=', akun_persediaan.id),
+            #         ('date', '>=', first_date_of_this_year),
+            #         ('date', '<=', self.date_to),
+            #         ('debit', '>', 0),
+            #         ('journal_id', '=', stock_journal.id),
+            #      ])
             purch_aml_a_year = self.env['account.move.line'].search(
                 ['&', '&', '&',
-                    ('account_id', '=', akun_persediaan.id),
+                    ('account_id', '=', stock_input_akun.id),
                     ('date', '>=', first_date_of_this_year),
                     ('date', '<=', self.date_to),
                     ('debit', '>', 0),
-                    ('journal_id', '=', stock_journal.id),
+                    ('journal_id', '=', purchase_journal.id),
                  ])
             purch_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
             purch_mat_value_a_year = sum(purch_aml_a_year.mapped('debit'))
