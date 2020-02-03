@@ -25,6 +25,11 @@ class GmcReportConfig(models.Model):
         comodel_name='account.journal',
         ondelete='restrict',
     )
+    return_journal_id = fields.Many2one(
+        string='Jurnal Retur',
+        comodel_name='account.journal',
+        ondelete='restrict',
+    )
     stock_input_account_id = fields.Many2one(
         string='Stock Input Account',
         comodel_name='account.account',

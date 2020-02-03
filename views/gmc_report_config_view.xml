@@ -46,6 +46,7 @@
                                     </group>
                                     <group>
                                         <field name="adjustment_journal_id" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="return_journal_id" options="{'no_open': True, 'no_create': True}" />
                                     </group>
                                 </group>
                             </page>

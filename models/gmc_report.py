@@ -198,6 +198,7 @@ class GmcReport(models.TransientModel):
 
         stock_journal = report_config.stock_journal_id
         purchase_journal = report_config.purchase_journal_id
+        return_journal = report_config.return_journal_id
         adjustment_journal = report_config.adjustment_journal_id
 
         # # get material value
@@ -476,9 +477,21 @@ class GmcReport(models.TransientModel):
                     ('date', '<=', self.date_to),
                     ('debit', '>', 0),
                     ('journal_id', '=', purchase_journal.id)])
-            purch_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            purch_aml = purch_aml.filtered(
+                lambda ml: ml.move_id.state == 'posted')
 
-            purch_mat_value = sum(purch_aml.mapped('debit'))
+            # get retur purchased material
+            return_purch_aml = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                    ('account_id', '=', akun_pembelian.id),
+                    ('date', '>=', self.date_from),
+                    ('date', '<=', self.date_to),
+                    ('journal_id', '=', return_journal.id)])
+            return_purch_aml = return_purch_aml.filtered(
+                lambda ml: ml.move_id.state == 'posted')
+
+            purch_mat_value = sum(purch_aml.mapped(
+                'debit')) - sum(return_purch_aml.mapped('credit'))
 
         else:
             # purch_aml = self.env['account.move.line'].search(
@@ -495,8 +508,21 @@ class GmcReport(models.TransientModel):
                  ('date', '<=', self.date_to), ('debit', '>', 0),
                  ('journal_id', '=', purchase_journal.id),
                  ])
-            purch_aml.filtered(lambda ml: ml.move_id.state == 'posted')
-            purch_mat_value = sum(purch_aml.mapped('debit'))
+            purch_aml = purch_aml.filtered(
+                lambda ml: ml.move_id.state == 'posted')
+
+            # get retur purchased material on automatic
+            return_purch_aml = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                    ('account_id', '=', stock_input_akun.id),
+                    ('date', '>=', self.date_from),
+                    ('date', '<=', self.date_to),
+                    ('journal_id', '=', return_journal.id)])
+            return_purch_aml = return_purch_aml.filtered(
+                lambda ml: ml.move_id.state == 'posted')
+
+            purch_mat_value = sum(purch_aml.mapped(
+                'debit')) - sum(return_purch_aml.mapped('credit'))
 
         self.material_net_purchased = purch_mat_value
 
@@ -517,7 +543,18 @@ class GmcReport(models.TransientModel):
                     ('journal_id', '=', purchase_journal.id)])
             purch_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
 
-            purch_mat_value_a_year = sum(purch_aml_a_year.mapped('debit'))
+            # get retur purchased material
+            return_purch_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                    ('account_id', '=', akun_pembelian.id),
+                    ('date', '>=', first_date_of_this_year),
+                    ('date', '<=', self.date_to),
+                    ('journal_id', '=', return_journal.id)])
+            return_purch_aml_a_year = return_purch_aml_a_year.filtered(
+                lambda ml: ml.move_id.state == 'posted')
+
+            purch_mat_value_a_year = sum(purch_aml_a_year.mapped(
+                'debit')) - sum(return_purch_aml_a_year.mapped('credit'))
 
         else:
             # purch_aml_a_year = self.env['account.move.line'].search(
@@ -536,8 +573,21 @@ class GmcReport(models.TransientModel):
                     ('debit', '>', 0),
                     ('journal_id', '=', purchase_journal.id),
                  ])
-            purch_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
-            purch_mat_value_a_year = sum(purch_aml_a_year.mapped('debit'))
+            purch_aml_a_year = purch_aml_a_year.filtered(
+                lambda ml: ml.move_id.state == 'posted')
+
+            # get retur purchased material
+            return_purch_aml_a_year = self.env['account.move.line'].search(
+                ['&', '&', '&',
+                    ('account_id', '=', stock_input_akun.id),
+                    ('date', '>=', first_date_of_this_year),
+                    ('date', '<=', self.date_to),
+                    ('journal_id', '=', return_journal.id)])
+            return_purch_aml_a_year = return_purch_aml_a_year.filtered(
+                lambda ml: ml.move_id.state == 'posted')
+
+            purch_mat_value_a_year = sum(purch_aml_a_year.mapped(
+                'debit')) - sum(return_purch_aml_a_year.mapped('credit'))
 
         self.material_net_purchased_a_year = purch_mat_value_a_year
 
@@ -606,7 +656,7 @@ class GmcReport(models.TransientModel):
                 ('account_id', '=', akun_persediaan.id),
                 ('date', '<=', self.date_to),
                 # ('journal_id', '=', stock_journal.id),
-             ])
+            ])
         ending_mat = ending_mat.filtered(lambda x: x.move_id.state == 'posted')
         ending_mat_value = sum(ending_mat.mapped('balance'))
 
@@ -636,7 +686,8 @@ class GmcReport(models.TransientModel):
                  ('date', '<=', self.date_to),
                  ('journal_id', '=', adjustment_journal.id)
                  ])
-            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_aml = adjust_aml.filtered(
+                lambda ml: ml.move_id.state == 'posted')
             adjust_mat_value = sum(adjust_aml.mapped('balance'))
         else:
             adjust_aml = self.env['account.move.line'].search(
@@ -646,7 +697,8 @@ class GmcReport(models.TransientModel):
                  ('date', '<=', self.date_to),
                  ('journal_id', '=', adjustment_journal.id)
                  ])
-            adjust_aml.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_aml = adjust_aml.filtered(
+                lambda ml: ml.move_id.state == 'posted')
             adjust_mat_value = sum(adjust_aml.mapped('balance'))
 
         self.material_adjustment = adjust_mat_value
@@ -659,7 +711,8 @@ class GmcReport(models.TransientModel):
                  ('date', '<=', self.date_to),
                  ('journal_id', '=', adjustment_journal.id)
                  ])
-            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_aml_a_year = adjust_aml_a_year.filtered(
+                lambda ml: ml.move_id.state == 'posted')
             adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
         else:
             adjust_aml_a_year = self.env['account.move.line'].search(
@@ -669,7 +722,8 @@ class GmcReport(models.TransientModel):
                  ('date', '<=', self.date_to),
                  ('journal_id', '=', adjustment_journal.id)
                  ])
-            adjust_aml_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
+            adjust_aml_a_year = adjust_aml_a_year.filtered(
+                lambda ml: ml.move_id.state == 'posted')
             adjust_mat_value_a_year = sum(adjust_aml_a_year.mapped('balance'))
 
         self.material_adjustment_a_year = adjust_mat_value_a_year
