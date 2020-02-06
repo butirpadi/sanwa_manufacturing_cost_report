@@ -414,6 +414,7 @@ class GmcReport(models.TransientModel):
                 ('date', '>=', self.date_from),
                 ('date', '<=', self.date_to)
              ])
+        prd_amt = prd_amt.filtered(lambda x: x.move_id.state == 'posted')
 
         self.production_amount = sum(prd_amt.mapped(
             'debit')) - sum(prd_amt.mapped('credit'))
@@ -424,6 +425,8 @@ class GmcReport(models.TransientModel):
                 ('date', '>', year_to_date),
                 ('date', '<=', current_year)
              ])
+        prd_amt_a_year = prd_amt_a_year.filtered(lambda x: x.move_id.state == 'posted')
+
 
         self.production_amount_a_year = sum(prd_amt_a_year.mapped(
             'debit')) - sum(prd_amt_a_year.mapped('credit'))
@@ -891,6 +894,7 @@ class GmcReport(models.TransientModel):
             ('date', '<=', self.date_to),
             ('journal_id', '=', adjustment_journal.id)
         ])
+        adjs_wip_aml = adjs_wip_aml.filtered(lambda x: x.move_id.state == 'posted')
         self.adjustment = sum(adjs_wip_aml.mapped('balance'))
 
         if self.production_amount > 0:
@@ -907,6 +911,7 @@ class GmcReport(models.TransientModel):
                 ('date', '<=', self.date_to),
                 ('journal_id', '=', adjustment_journal.id)
             ])
+        adjs_wip_aml_a_year = adjs_wip_aml_a_year.filtered(lambda x: x.move_id.state == 'posted')
         self.adjustment_a_year = sum(adjs_wip_aml_a_year.mapped('balance'))
 
         if self.production_amount_a_year > 0:
@@ -923,7 +928,7 @@ class GmcReport(models.TransientModel):
                 ('date', '>=', self.date_from),
                 ('date', '<=', self.date_to)
              ])
-
+        proc_cost = proc_cost.filtered(lambda x: x.move_id.state == 'posted')        
         self.process_cost = sum(proc_cost.mapped(
             'debit')) - sum(proc_cost.mapped('credit'))
         if self.production_amount > 0:
@@ -937,6 +942,7 @@ class GmcReport(models.TransientModel):
                 ('date', '>', year_to_date),
                 ('date', '<=', current_year)
              ])
+        proc_cost_a_year = proc_cost_a_year.filtered(lambda x: x.move_id.state == 'posted')        
 
         self.process_cost_a_year = sum(proc_cost_a_year.mapped(
             'debit')) - sum(proc_cost_a_year.mapped('credit'))
@@ -976,6 +982,8 @@ class GmcReport(models.TransientModel):
                  ('date', '>=', self.date_from),
                  ('date', '<=', self.date_to)
                  ])
+            acc_amls = acc_amls.filtered(lambda x: x.move_id.state == 'posted')        
+
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
@@ -993,6 +1001,7 @@ class GmcReport(models.TransientModel):
                  ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
+            acc_amls_a_year = acc_amls_a_year.filtered(lambda x: x.move_id.state == 'posted')        
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
 
@@ -1036,6 +1045,7 @@ class GmcReport(models.TransientModel):
                  ('date', '>=', self.date_from),
                  ('date', '<=', self.date_to)
                  ])
+            acc_amls = acc_amls.filtered(lambda x: x.move_id.state == 'posted')
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
@@ -1051,6 +1061,7 @@ class GmcReport(models.TransientModel):
                  ('date', '>', year_to_date),
                  ('date', '<=', current_year)
                  ])
+            acc_amls_a_year = acc_amls_a_year.filtered(lambda x: x.move_id.state == 'posted')        
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
