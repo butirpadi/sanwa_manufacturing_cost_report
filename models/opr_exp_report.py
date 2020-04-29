@@ -71,6 +71,7 @@ class OperatingExpenseReport(models.TransientModel):
                 ('date', '>=', self.date_from),
                 ('date', '<=', self.date_to)
              ])
+        sales_amount_aml = sales_amount_aml.filtered(lambda ml: ml.move_id.state == 'posted')
         sales_amount = sum(sales_amount_aml.mapped('credit'))
         
         sales_return_amount_aml = self.env['account.move.line'].search(
@@ -79,6 +80,7 @@ class OperatingExpenseReport(models.TransientModel):
                 ('date', '>=', self.date_from),
                 ('date', '<=', self.date_to)
              ])
+        sales_return_amount_aml = sales_return_amount_aml.filtered(lambda ml: ml.move_id.state == 'posted')
         sales_return_amount = sum(sales_return_amount_aml.mapped('debit'))
 
         self.net_sales_amount = sales_amount - sales_return_amount
@@ -99,6 +101,7 @@ class OperatingExpenseReport(models.TransientModel):
                 ('date', '>', first_date_of_this_year),
                 ('date', '<=', self.date_to)
              ])
+        sales_amount_a_year_aml = sales_amount_a_year_aml.filtered(lambda ml: ml.move_id.state == 'posted')
         sales_amount_a_year = sum(sales_amount_a_year_aml.mapped('credit'))
 
         sales_return_amount_a_year_aml = self.env['account.move.line'].search(
@@ -107,6 +110,7 @@ class OperatingExpenseReport(models.TransientModel):
                 ('date', '>=', self.date_from),
                 ('date', '<=', self.date_to)
              ])
+        sales_return_amount_a_year_aml = sales_return_amount_a_year_aml.filtered(lambda ml: ml.move_id.state == 'posted')
         sales_return_amount_a_year = sum(sales_return_amount_a_year_aml.mapped('debit'))
     
 
@@ -126,6 +130,7 @@ class OperatingExpenseReport(models.TransientModel):
                  ('date', '<=', self.date_to)
                  ])
             # get amount from those account move lines
+            acc_amls = acc_amls.filtered(lambda ml: ml.move_id.state == 'posted')
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
 
@@ -142,6 +147,7 @@ class OperatingExpenseReport(models.TransientModel):
                  ('date', '<=', current_year)
                  ])
             # get amount from those account move lines
+            acc_amls_a_year = acc_amls_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
 
@@ -190,6 +196,7 @@ class OperatingExpenseReport(models.TransientModel):
                  ('date', '>=', self.date_from),
                  ('date', '<=', self.date_to)
                  ])
+            acc_amls = acc_amls.filtered(lambda ml: ml.move_id.state == 'posted')
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
@@ -206,6 +213,7 @@ class OperatingExpenseReport(models.TransientModel):
                  ('date', '>', first_date_of_this_year),
                  ('date', '<=', current_year)
                  ])
+            acc_amls_a_year = acc_amls_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
@@ -255,6 +263,7 @@ class OperatingExpenseReport(models.TransientModel):
                  ('date', '>=', self.date_from),
                  ('date', '<=', self.date_to)
                  ])
+            acc_amls = acc_amls.filtered(lambda ml: ml.move_id.state == 'posted')
             # get amount from those account move lines
             acc_amount = sum(acc_amls.mapped('debit')) - \
                 sum(acc_amls.mapped('credit'))
@@ -271,6 +280,7 @@ class OperatingExpenseReport(models.TransientModel):
                  ('date', '>', first_date_of_this_year),
                  ('date', '<=', current_year)
                  ])
+            acc_amls_a_year = acc_amls_a_year.filtered(lambda ml: ml.move_id.state == 'posted')
             # get amount from those account move lines
             acc_amount_a_year = sum(acc_amls_a_year.mapped('debit')) - \
                 sum(acc_amls_a_year.mapped('credit'))
